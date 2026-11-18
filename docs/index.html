@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>謝老師 AI 互動教室</title>
+<meta name="description" content="謝老師 AI 互動教室：語文知識、寫作工坊、成語生詞、圖書教學、AI 影片及互動遊戲的學習入口，按圖示即可開啟對應網頁。">
+<style>
+:root{
+  --ink:#493a46;
+  --ink-soft:rgba(73,58,70,.66);
+  --paper:#fffdf7;
+  --pink:#ffd8e7;
+  --pink-deep:#ffb3d0;
+  --mint:#c9f2e2;
+  --butter:#ffefbb;
+  --sky:#d6e8ff;
+  --lilac:#e5daff;
+  --peach:#ffdcc2;
+  --peach-soft:rgba(255,220,194,.55);
+  --line:2.5px solid var(--ink);
+  --hard:4px 4px 0 rgba(73,58,70,.16);
+  --hard-sm:2px 2px 0 rgba(73,58,70,.16);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  color:var(--ink);
+  font-family:"Noto Sans HK","PingFang HK","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  line-height:1.75;
+  background-color:#fff8ee;
+  background-image:
+    linear-gradient(rgba(73,58,70,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(73,58,70,.05) 1px,transparent 1px);
+  background-size:24px 24px;
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit}
+h1,h2,h3,h4,p{margin:0}
+.wrap{
+  width:100%;
+  max-width:1000px;
+  margin:0 auto;
+  padding:16px 14px calc(40px + env(safe-area-inset-bottom));
+  position:relative;
+  z-index:2;
+}
+
+/* ---------- 背景手帳裝飾 ---------- */
+.doodle{position:fixed;pointer-events:none;z-index:1;opacity:.34}
+.doodle.a{top:8px;left:-22px;width:74px;transform:rotate(-12deg)}
+.doodle.b{top:96px;right:-24px;width:64px;transform:rotate(14deg)}
+.doodle.c{bottom:26px;left:-18px;width:58px;transform:rotate(8deg)}
+.tape{
+  position:absolute;
+  width:84px;height:20px;
+  background:repeating-linear-gradient(90deg,rgba(255,179,208,.85) 0 10px,rgba(255,216,231,.85) 10px 20px);
+  border-left:2px solid var(--ink);
+  border-right:2px solid var(--ink);
+  border-radius:3px;
+  opacity:.92;
+}
+
+/* ---------- 首屏 ---------- */
+.hero{
+  position:relative;
+  border:var(--line);
+  border-radius:26px;
+  background:var(--paper);
+  box-shadow:var(--hard);
+  padding:28px 16px 18px;
+  overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute;left:0;right:0;top:0;height:14px;
+  background:repeating-linear-gradient(90deg,var(--pink) 0 22px,var(--butter) 22px 44px,var(--mint) 44px 66px,var(--sky) 66px 88px,var(--lilac) 88px 110px);
+  border-bottom:var(--line);
+}
+.hero .tape.top{
+  top:-6px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  z-index:3;
+}
+.hero h1{
+  position:relative;
+  font-size:clamp(1.26rem,5.6vw,1.92rem);
+  letter-spacing:.02em;
+  line-height:1.34;
+  text-align:center;
+}
+.hero h1 .hl{
+  background:linear-gradient(transparent 58%,var(--pink-deep) 58%);
+  padding:0 3px;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+.hero .sub{
+  margin-top:9px;
+  font-size:clamp(.78rem,3.2vw,.9rem);
+  color:var(--ink-soft);
+  text-align:center;
+  max-width:34em;
+  margin-left:auto;
+  margin-right:auto;
+}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:7px;
+  justify-content:center;
+  margin-top:14px;
+}
+.chip{
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:var(--sky);
+  padding:2px 10px;
+  font-size:.7rem;
+  box-shadow:var(--hard-sm);
+  white-space:nowrap;
+}
+.chip.mint{background:var(--mint)}
+.chip.butter{background:var(--butter)}
+.chip.lilac{background:var(--lilac)}
+.chip.peach{background:var(--peach)}
+.chip.pink{background:var(--pink)}
+
+/* ---------- 區塊標題 ---------- */
+.sec-head{
+  display:flex;align-items:center;gap:9px;
+  margin:24px 0 11px;
+  flex-wrap:wrap;
+}
+.sec-head .no{
+  width:30px;height:30px;flex:none;
+  border:var(--line);border-radius:50%;
+  background:var(--butter);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.82rem;
+  box-shadow:var(--hard-sm);
+}
+.sec-head h2{
+  font-size:clamp(.96rem,3.9vw,1.14rem);
+  letter-spacing:.03em;
+}
+.sec-head .hint{
+  margin-left:auto;
+  font-size:.68rem;
+  color:var(--ink-soft);
+  border-bottom:2px dashed rgba(73,58,70,.3);
+}
+
+/* ---------- 分類卡 ---------- */
+.card-grid{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+.cat-card{
+  position:relative;
+  display:flex;align-items:center;gap:11px;
+  border:var(--line);
+  border-radius:20px;
+  background:var(--paper);
+  box-shadow:var(--hard);
+  cursor:pointer;
+  width:100%;
+  text-align:left;
+  padding:12px 13px;
+  transition:transform .14s ease, box-shadow .14s ease;
+}
+.cat-card:hover{transform:translate(-1px,-3px);box-shadow:6px 8px 0 rgba(73,58,70,.18)}
+.cat-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 rgba(73,58,70,.2)}
+.cat-card:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.cat-icon{
+  flex:none;
+  width:clamp(50px,13.4vw,60px);
+  height:clamp(50px,13.4vw,60px);
+  border:var(--line);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--pink);
+  box-shadow:var(--hard-sm);
+}
+.cat-card[data-cat="writing"] .cat-icon{background:var(--mint)}
+.cat-card[data-cat="idiom"] .cat-icon{background:var(--butter)}
+.cat-card[data-cat="reading"] .cat-icon{background:var(--peach)}
+.cat-card[data-cat="media"] .cat-icon{background:var(--lilac)}
+.cat-icon svg{width:70%;height:70%;display:block}
+.cat-body{min-width:0;flex:1}
+.cat-name{
+  display:block;
+  font-size:clamp(.9rem,3.8vw,1.02rem);
+  font-weight:700;
+  letter-spacing:.02em;
+  line-height:1.35;
+}
+.cat-count{
+  display:inline-block;
+  margin-top:5px;
+  font-size:.67rem;
+  border:2px dashed var(--ink);
+  border-radius:999px;
+  padding:0 8px;
+  color:var(--ink-soft);
+  background:#fff;
+}
+.go-arrow{flex:none;width:18px;height:18px;opacity:.5;align-self:flex-start;margin-top:6px}
+
+/* 分類內的描述與標籤（圖書教學、AI 影片及互動遊戲） */
+.cat-card.has-desc{flex-wrap:wrap;align-items:flex-start}
+.cat-card.has-desc .cat-body{flex:1 1 calc(100% - 92px)}
+.cat-desc{
+  display:block;
+  flex:1 0 100%;
+  margin-top:3px;
+  font-size:.75rem;
+  line-height:1.7;
+  background:var(--desc-bg,var(--lilac));
+  border:2px dashed var(--ink);
+  border-radius:13px;
+  padding:7px 9px;
+  word-break:break-word;
+}
+.cat-card[data-cat="reading"] .cat-desc{background:var(--peach-soft)}
+.cat-card[data-cat="media"] .cat-desc{background:rgba(229,218,255,.55)}
+.cat-desc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.cat-desc-tags span{
+  display:inline-block;
+  font-size:.65rem;
+  line-height:1.75;
+  background:var(--paper);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  padding:0 8px;
+  color:var(--ink-soft);
+}
+
+/* ---------- 連結清單 ---------- */
+#linkArea{scroll-margin-top:14px}
+.link-list{display:flex;flex-direction:column;gap:9px}
+.current-line{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:9px}
+.link-row{
+  display:flex;align-items:center;gap:7px;
+  border:var(--line);
+  border-radius:15px;
+  background:var(--paper);
+  padding:7px 8px;
+  box-shadow:3px 3px 0 rgba(73,58,70,.12);
+}
+.link-row .lt-wrap{
+  flex:1 1 auto;
+  min-width:0;
+  text-decoration:none;
+  color:var(--ink);
+  display:flex;flex-direction:column;
+  padding:5px 2px;
+  min-height:42px;
+}
+.link-row .lt-wrap:hover .lt{text-decoration:underline;text-underline-offset:3px}
+.link-row .lt-wrap:focus-visible{outline:3px solid var(--ink);outline-offset:2px;border-radius:6px}
+.link-row .lt{font-weight:600;font-size:.85rem;line-height:1.4;word-break:break-word}
+.link-row .lu{font-size:.67rem;color:var(--ink-soft);margin-top:1px;word-break:break-all}
+.row-btn{
+  flex:none;
+  width:36px;height:36px;
+  border:2px solid var(--ink);
+  border-radius:10px;
+  background:var(--mint);
+  display:flex;align-items:center;justify-content:center;
+  text-decoration:none;color:var(--ink);
+  cursor:pointer;
+  line-height:1;padding:0;
+}
+.row-btn.del{background:#fff;color:var(--ink-soft)}
+.row-btn.del:hover{color:var(--ink)}
+.row-btn svg{width:16px;height:16px;display:block}
+.row-btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.empty-note{
+  border:2.5px dashed rgba(73,58,70,.4);
+  border-radius:14px;
+  padding:11px 12px;
+  font-size:.75rem;
+  color:var(--ink-soft);
+  background:rgba(255,255,255,.7);
+  line-height:1.7;
+}
+
+/* ---------- 按鈕 ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:var(--line);
+  border-radius:999px;
+  background:var(--butter);
+  padding:8px 15px;
+  font-size:.83rem;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:3px 3px 0 rgba(73,58,70,.18);
+  transition:transform .12s ease, box-shadow .12s ease;
+  min-height:44px;
+}
+.btn:hover{transform:translate(-1px,-2px);box-shadow:4px 5px 0 rgba(73,58,70,.2)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 rgba(73,58,70,.2)}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.btn.mint{background:var(--mint)}
+.btn.pink{background:var(--pink)}
+.btn.ghost{background:#fff}
+.btn svg{width:16px;height:16px;display:block}
+
+.actions{
+  display:flex;flex-wrap:wrap;gap:9px;
+  margin-top:24px;
+  padding:14px 13px;
+  border:2.5px dashed rgba(73,58,70,.45);
+  border-radius:20px;
+  background:rgba(255,255,255,.62);
+}
+.actions .btn{flex:1 1 auto}
+.actions .tip{
+  flex:1 1 100%;
+  order:5;
+  font-size:.74rem;
+  color:var(--ink-soft);
+  line-height:1.75;
+  margin-top:2px;
+}
+
+/* ---------- 彈窗 ---------- */
+.mask{
+  position:fixed;inset:0;z-index:9998;
+  background:rgba(73,58,70,.42);
+  display:flex;align-items:center;justify-content:center;
+  padding:14px;
+}
+.sheet{
+  width:100%;
+  max-width:440px;
+  max-height:88vh;
+  overflow-y:auto;
+  background:var(--paper);
+  border:var(--line);
+  border-radius:22px;
+  box-shadow:6px 7px 0 rgba(73,58,70,.28);
+  padding:18px 15px 14px;
+}
+.sheet h3{font-size:1rem;letter-spacing:.02em;padding-right:56px}
+.sheet .desc{font-size:.75rem;color:var(--ink-soft);margin-top:4px;line-height:1.65}
+.sheet-close{
+  position:absolute;top:14px;right:14px;
+  width:34px;height:34px;
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:#fff;
+  cursor:pointer;
+  line-height:1;
+  display:flex;align-items:center;justify-content:center;
+}
+.sheet-close svg{width:15px;height:15px;display:block}
+.field{margin-top:12px}
+.field label{display:block;font-size:.77rem;font-weight:600;margin-bottom:5px}
+.field input,.field select{
+  width:100%;
+  border:2.5px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:9px 11px;
+  font:inherit;
+  font-size:.88rem;
+  color:var(--ink);
+  min-height:44px;
+}
+.field input:focus,.field select:focus{outline:3px solid var(--pink-deep);outline-offset:1px}
+.sheet-actions{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.sheet-actions .btn{flex:1 1 110px}
+.form-err{
+  margin-top:10px;font-size:.75rem;
+  border:2px solid var(--ink);
+  background:var(--pink);
+  border-radius:10px;
+  padding:7px 10px;
+}
+.sheet-hint{
+  margin-top:12px;
+  border-top:2px dashed rgba(73,58,70,.3);
+  padding-top:10px;
+  font-size:.72rem;
+  color:var(--ink-soft);
+  line-height:1.7;
+}
+[hidden]{display:none !important}
+
+/* ---------- 頁尾 ---------- */
+.foot{
+  margin-top:28px;
+  border-top:2.5px dashed rgba(73,58,70,.36);
+  padding-top:14px;
+  font-size:.73rem;
+  color:var(--ink-soft);
+  text-align:center;
+  line-height:2;
+}
+.foot .heart{color:var(--pink-deep);font-size:.9rem}
+
+/* ---------- 較寬畫面 ---------- */
+@media (min-width:760px){
+  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .cat-card{height:100%}
+  .cat-card .cat-body{display:flex;flex-direction:column;justify-content:center}
+  .cat-card[data-cat="media"]{grid-column:auto}
+  .cat-card[data-cat="media"] .cat-body{flex:1 1 auto}
+  .cat-card[data-cat="media"] .go-arrow{position:static}
+  .hero{padding:32px 24px 22px}
+  .hero h1{font-size:clamp(1.6rem,2.6vw,2rem)}
+}
+@media (min-width:1020px){
+  .card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cat-desc{font-size:.78rem}
+}
+@media (max-width:360px){
+  .wrap{padding-left:11px;padding-right:11px}
+  .hero{padding-left:13px;padding-right:13px}
+  .btn{padding:8px 12px;font-size:.8rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<svg class="doodle a" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="26" fill="none" stroke="#493a46" stroke-width="3" stroke-dasharray="6 7"/><path d="M50 24 L56 44 L76 50 L56 56 L50 76 L44 56 L24 50 L44 44 Z" fill="#ffefbb" stroke="#493a46" stroke-width="3" stroke-linejoin="round"/></svg>
+<svg class="doodle b" viewBox="0 0 100 100" aria-hidden="true"><path d="M20 70 Q40 26 62 56 T92 40" fill="none" stroke="#493a46" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 8"/><circle cx="22" cy="70" r="7" fill="#c9f2e2" stroke="#493a46" stroke-width="3"/></svg>
+<svg class="doodle c" viewBox="0 0 100 100" aria-hidden="true"><rect x="20" y="24" width="60" height="52" rx="8" fill="#ffd8e7" stroke="#493a46" stroke-width="3" transform="rotate(-8 50 50)"/><path d="M36 42 H64 M36 56 H58" stroke="#493a46" stroke-width="3" stroke-linecap="round" transform="rotate(-8 50 50)"/></svg>
+
+<div class="wrap" data-generated-by="vibe-coding-frontend-design">
+
+  <header class="hero">
+    <span class="tape top" aria-hidden="true"></span>
+    <h1><span class="hl">謝老師 AI 互動教室</span></h1>
+    <p class="sub">按一下圖示，就可以進入對應的學習網頁。所有連結都可以自己新增、修改和刪除。</p>
+    <div class="hero-meta">
+      <span class="chip pink">語文知識</span>
+      <span class="chip mint">寫作工坊</span>
+      <span class="chip butter">成語生詞</span>
+      <span class="chip peach">圖書教學</span>
+      <span class="chip lilac">AI 影片及互動遊戲</span>
+    </div>
+  </header>
+
+  <div class="sec-head">
+    <span class="no">1</span>
+    <h2>學習分類</h2>
+    <span class="hint">點圖示進入</span>
+  </div>
+  <div class="card-grid" id="cardGrid"></div>
+
+  <div class="sec-head">
+    <span class="no">2</span>
+    <h2>我的連結</h2>
+    <span class="hint">按「新增連結」編輯</span>
+  </div>
+  <div id="linkArea"></div>
+
+  <div class="actions">
+    <button class="btn mint" type="button" id="btnAdd">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      新增連結
+    </button>
+    <button class="btn" type="button" id="btnExport">匯出備份</button>
+    <button class="btn ghost" type="button" id="btnImport">匯入備份</button>
+    <button class="btn ghost" type="button" id="btnHelp">使用說明</button>
+    <p class="tip">所有連結只儲存在這個瀏覽器裡，不會上傳到其他地方；清除瀏覽器資料會一併清除，記得先按「匯出」備份。</p>
+  </div>
+
+  <div class="foot">
+    用字參考《香港小學學習字詞表》· 繁體中文<br>
+    願你每天都有一點新發現 <span class="heart" aria-hidden="true">♡</span>
+  </div>
+</div>
+
+<div class="mask" id="modalMask" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="sheet-close" type="button" id="btnClose" aria-label="關閉視窗">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <h3 id="modalTitle">新增連結</h3>
+    <p class="desc" id="modalDesc">填好資料，按「儲存」就會加入這個分類。</p>
+    <div class="field">
+      <label for="fTitle">名稱</label>
+      <input id="fTitle" type="text" maxlength="40" placeholder="例如：三年級 字形小測驗" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="fUrl">網址</label>
+      <input id="fUrl" type="url" maxlength="500" placeholder="https://..." autocomplete="off" inputmode="url">
+    </div>
+    <div class="field">
+      <label for="fCat">分類</label>
+      <select id="fCat"></select>
+    </div>
+    <p class="form-err" id="formErr" hidden></p>
+    <div class="sheet-actions">
+      <button class="btn mint" type="button" id="btnSave">儲存</button>
+      <button class="btn ghost" type="button" id="btnCancel">取消</button>
+    </div>
+    <p class="sheet-hint" id="helpBody" hidden></p>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============ 端能力橋接（標準實作，請勿改動） ============ */
+  var REQUEST_TYPE = 'newapp-native-request';
+  var RESPONSE_TYPE = 'newapp-native-response';
+  var env = new URLSearchParams(location.search).get('env');
+  var shouldUsePostMessage = env === 'newapp';
+  var pending = new Map();
+
+  function createRequestId() {
+    return 'native_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+  }
+
+  function invokeHostNative(capability, params) {
+    return new Promise(function (resolve, reject) {
+      var requestId = createRequestId();
+      pending.set(requestId, { resolve: resolve, reject: reject });
+      window.parent.postMessage({
+        type: REQUEST_TYPE,
+        requestId: requestId,
+        capability: capability,
+        params: params || {}
+      }, '*');
+    });
+  }
+
+  function invokeOrFallback(capability, params, fallback) {
+    if (!shouldUsePostMessage || window.parent === window) {
+      return Promise.resolve().then(fallback);
+    }
+    return invokeHostNative(capability, params).catch(function () {
+      return Promise.resolve().then(fallback);
+    });
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window.parent || !event.data || event.data.type !== RESPONSE_TYPE) {
+      return;
+    }
+    var response = event.data;
+    var request = pending.get(response.requestId);
+    if (!request) {
+      return;
+    }
+    pending.delete(response.requestId);
+    if (response.ok) {
+      request.resolve(response.data);
+    } else {
+      request.reject(new Error(response.error || 'native invoke failed'));
+    }
+  });
+
+  var h5Loading;
+
+  function h5Toast(message) {
+    var el = document.createElement('div');
+    el.textContent = message;
+    el.setAttribute('role', 'status');
+    el.style.cssText = [
+      'position:fixed',
+      'left:50%',
+      'top:50%',
+      'transform:translate(-50%,-50%)',
+      'z-index:99999',
+      'max-width:76vw',
+      'padding:12px 24px',
+      'color:#fff',
+      'background:rgba(20,20,20,.88)',
+      'border-radius:10px',
+      'font-size:.88rem',
+      'text-align:center',
+      'pointer-events:none',
+      'transition:opacity .3s'
+    ].join(';');
+    document.body.appendChild(el);
+    setTimeout(function () {
+      el.style.opacity = '0';
+      setTimeout(function () { el.remove(); }, 300);
+    }, 2200);
+  }
+
+  function h5ShowLoading() {
+    if (h5Loading) {
+      return;
+    }
+    h5Loading = document.createElement('div');
+    var spinner = document.createElement('div');
+    spinner.style.cssText = 'width:40px;height:40px;border:3px solid #ffffff55;'
+      + 'border-top-color:#fff;border-radius:50%';
+    if (spinner.animate) {
+      spinner.animate(
+        [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+        { duration: 800, iterations: Infinity }
+      );
+    }
+    h5Loading.style.cssText = 'position:fixed;inset:0;z-index:99998;display:flex;'
+      + 'align-items:center;justify-content:center;background:#0004';
+    h5Loading.appendChild(spinner);
+    document.body.appendChild(h5Loading);
+  }
+
+  function h5HideLoading() {
+    if (h5Loading && h5Loading.parentNode) {
+      h5Loading.parentNode.removeChild(h5Loading);
+    }
+    h5Loading = undefined;
+  }
+
+  function h5OpenDetail(params) {
+    var url = params && params.url;
+    if (!url) {
+      throw new Error('url is required');
+    }
+    window.open(url, '_blank');
+  }
+
+  function getBrowserFallback(capability, params) {
+    params = params || {};
+    var handlers = {
+      showToast: function () { h5Toast(params.message || ''); },
+      showLoading: h5ShowLoading,
+      hideLoading: h5HideLoading,
+      hideNativeLoading: function () { return undefined; },
+      openDetail: function () { return h5OpenDetail(params); }
+    };
+    return handlers[capability] || function () {
+      throw new Error('unsupported browser fallback: ' + capability);
+    };
+  }
+
+  function toast(message) {
+    var params = { message: message, type: 'info' };
+    return invokeOrFallback('showToast', params, getBrowserFallback('showToast', params))
+      .catch(function () { return undefined; });
+  }
+
+  window.addEventListener('DOMContentLoaded', function () {
+    invokeOrFallback('hideLoading', {}, h5HideLoading).catch(function () {});
+  });
+
+  /* ============ 模型：分類與圖示 ============ */
+  var ICONS = {
+    book: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 10h13a5 5 0 0 1 5 5v24a4 4 0 0 0-4-4H8z" fill="#fffdf7" stroke="#493a46" stroke-width="2.6" stroke-linejoin="round"/><path d="M40 10H27a5 5 0 0 0-5 5v24a4 4 0 0 1 4-4h14z" fill="#fffdf7" stroke="#493a46" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 18h8M13 24h8M27 18h8M27 24h8" stroke="#493a46" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    pen: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38l3-9L31 11l7 7-18 18z" fill="#fffdf7" stroke="#493a46" stroke-width="2.6" stroke-linejoin="round"/><path d="M28 14l7 7" stroke="#493a46" stroke-width="2.6" stroke-linecap="round"/><path d="M10 38l9-3-6-6z" fill="#ffefbb" stroke="#493a46" stroke-width="2.4" stroke-linejoin="round"/><path d="M6 42h22" stroke="#493a46" stroke-width="2.6" stroke-linecap="round"/></svg>',
+    card: '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="12" width="34" height="24" rx="5" fill="#fffdf7" stroke="#493a46" stroke-width="2.6"/><path d="M13 20h9M13 27h9" stroke="#493a46" stroke-width="2.2" stroke-linecap="round"/><text x="29" y="27" font-size="12" font-weight="700" fill="#493a46" text-anchor="middle" font-family="sans-serif">文</text></svg>',
+    reader: '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 14c-3-3-8-4-13-4v25c5 0 10 1 13 4 3-3 8-4 13-4V10c-5 0-10 1-13 4z" fill="#fffdf7" stroke="#493a46" stroke-width="2.6" stroke-linejoin="round"/><path d="M24 14v25" stroke="#493a46" stroke-width="2.6" stroke-linecap="round"/><path d="M14 17c2 0 4 .4 6 1.3M14 22c2 0 4 .4 6 1.3M28 18.3c2-.9 4-1.3 6-1.3" stroke="#493a46" stroke-width="2.1" stroke-linecap="round"/><path d="M20 34c-2.6-1.5-5.6-2.2-9-2.5" stroke="#493a46" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>',
+    play: '<svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="12" width="36" height="26" rx="6" fill="#fffdf7" stroke="#493a46" stroke-width="2.6"/><path d="M21 20l9 6-9 6z" fill="#ffd8e7" stroke="#493a46" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 8l4 4M36 8l-4 4" stroke="#493a46" stroke-width="2.4" stroke-linecap="round"/></svg>'
+  };
+
+  var CATEGORIES = [
+    {
+      id: 'chinese',
+      name: '語文知識',
+      icon: ICONS.book,
+      desc: ''
+    },
+    {
+      id: 'writing',
+      name: '寫作工坊',
+      icon: ICONS.pen,
+      desc: ''
+    },
+    {
+      id: 'idiom',
+      name: '成語生詞',
+      icon: ICONS.card,
+      desc: ''
+    },
+    {
+      id: 'reading',
+      name: '圖書教學',
+      icon: ICONS.reader,
+      desc: '圖書內容導讀和閱讀理解練習',
+      tags: ['閱讀理解', '讀後活動']
+    },
+    {
+      id: 'media',
+      name: 'AI 影片及互動遊戲',
+      icon: ICONS.play,
+      desc: '課文、古詩詞文的影片和互動遊戲',
+      tags: ['課文影片與互動遊戲', '古詩詞文影片與互動遊戲']
+    }
+  ];
+
+  /* ============ 模型：狀態與本機儲存 ============ */
+  var STORAGE_KEY = 'tse_classroom_hub_v2';
+  var state = {
+    links: [],
+    current: CATEGORIES[0].id
+  };
+
+  function createId() {
+    return 'l_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  function normalizeLink(raw) {
+    if (!raw || typeof raw !== 'object') {
+      return null;
+    }
+    var title = String(raw.title == null ? '' : raw.title).trim().slice(0, 40);
+    var url = String(raw.url == null ? '' : raw.url).trim().slice(0, 500);
+    var cat = CATEGORIES.some(function (c) { return c.id === raw.cat; }) ? raw.cat : CATEGORIES[0].id;
+    if (!title || !url) {
+      return null;
+    }
+    if (!/^https?:\/\//i.test(url)) {
+      return null;
+    }
+    return { id: String(raw.id || createId()), title: title, url: url, cat: cat };
+  }
+
+  function loadState() {
+    var raw = null;
+    try {
+      raw = window.localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      raw = null;
+    }
+    if (!raw) {
+      return;
+    }
+    var parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      return;
+    }
+    if (!parsed || !Array.isArray(parsed.links)) {
+      return;
+    }
+    state.links = parsed.links.map(normalizeLink).filter(Boolean);
+  }
+
+  function persist() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ links: state.links }));
+      return true;
+    } catch (e) {
+      toast('未能儲存，這個瀏覽器未能使用本機儲存。');
+      return false;
+    }
+  }
+
+  function catOf(id) {
+    for (var i = 0; i < CATEGORIES.length; i++) {
+      if (CATEGORIES[i].id === id) {
+        return CATEGORIES[i];
+      }
+    }
+    return CATEGORIES[0];
+  }
+
+  function linksOf(catId) {
+    return state.links.filter(function (l) { return l.cat === catId; });
+  }
+
+  /* ============ DOM 參照 ============ */
+  var cardGrid = document.getElementById('cardGrid');
+  var linkArea = document.getElementById('linkArea');
+  var modalMask = document.getElementById('modalMask');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalDesc = document.getElementById('modalDesc');
+  var helpBody = document.getElementById('helpBody');
+  var fTitle = document.getElementById('fTitle');
+  var fUrl = document.getElementById('fUrl');
+  var fCat = document.getElementById('fCat');
+  var formErr = document.getElementById('formErr');
+  var editingId = null;
+  var lastFocus = null;
+
+  var ICON_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+  var ICON_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-8 8"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+  var ICON_EDIT = '<svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l4-1 10-10-3-3L5 16z"/><path d="M14 6l3 3"/></svg>';
+  var ICON_DEL = '<svg viewBox="0 0 24 24" fill="none" stroke="#493a46" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 4h4M7 7l1 13h8l1-13"/><path d="M11 11v6M13 11v6"/></svg>';
+
+  /* ============ 渲染：分類卡 ============ */
+  function buildCards() {
+    cardGrid.textContent = '';
+    CATEGORIES.forEach(function (cat) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cat-card' + (cat.desc ? ' has-desc' : '');
+      btn.setAttribute('data-cat', cat.id);
+      btn.setAttribute('aria-label', cat.name + '，共 ' + linksOf(cat.id).length + ' 個連結');
+
+      var icon = document.createElement('span');
+      icon.className = 'cat-icon';
+      icon.innerHTML = cat.icon;
+
+      var body = document.createElement('span');
+      body.className = 'cat-body';
+
+      var name = document.createElement('span');
+      name.className = 'cat-name';
+      name.textContent = cat.name;
+
+      var count = document.createElement('span');
+      count.className = 'cat-count';
+      count.textContent = linksOf(cat.id).length + ' 個連結';
+
+      body.appendChild(name);
+      body.appendChild(count);
+
+      if (cat.desc) {
+        var desc = document.createElement('span');
+        desc.className = 'cat-desc';
+
+        var descText = document.createElement('span');
+        descText.className = 'cat-desc-text';
+        descText.textContent = cat.desc;
+
+        var descTags = document.createElement('span');
+        descTags.className = 'cat-desc-tags';
+        (cat.tags || []).forEach(function (tag) {
+          var t = document.createElement('span');
+          t.textContent = tag;
+          descTags.appendChild(t);
+        });
+
+        desc.appendChild(descText);
+        desc.appendChild(descTags);
+        body.appendChild(desc);
+      }
+
+      var arrow = document.createElement('span');
+      arrow.className = 'go-arrow';
+      arrow.innerHTML = ICON_ARROW;
+
+      btn.appendChild(icon);
+      btn.appendChild(body);
+      btn.appendChild(arrow);
+
+      btn.addEventListener('click', function () {
+        state.current = cat.id;
+        renderLinks();
+        linkArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      cardGrid.appendChild(btn);
+    });
+  }
+
+  /* ============ 渲染：連結清單 ============ */
+  function shortUrl(url) {
+    var text = String(url).replace(/^https?:\/\//i, '');
+    return text.length > 46 ? text.slice(0, 46) + '…' : text;
+  }
+
+  function openLink(url) {
+    var capability = 'openDetail';
+    var params = { url: url };
+    return invokeOrFallback(
+      capability,
+      params,
+      getBrowserFallback(capability, params)
+    ).catch(function () {
+      toast('未能開啟這個網頁，請稍後再試。');
+      return undefined;
+    });
+  }
+
+  function buildLinkRow(link) {
+    var row = document.createElement('div');
+    row.className = 'link-row';
+
+    var a = document.createElement('a');
+    a.className = 'lt-wrap';
+    a.href = link.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+
+    var t = document.createElement('span');
+    t.className = 'lt';
+    t.textContent = link.title;
+
+    var u = document.createElement('span');
+    u.className = 'lu';
+    u.textContent = shortUrl(link.url);
+
+    a.appendChild(t);
+    a.appendChild(u);
+    a.addEventListener('click', function (event) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+        return;
+      }
+      event.preventDefault();
+      openLink(link.url);
+    });
+
+    var open = document.createElement('a');
+    open.className = 'row-btn';
+    open.href = link.url;
+    open.target = '_blank';
+    open.rel = 'noopener noreferrer';
+    open.innerHTML = ICON_OPEN;
+    open.setAttribute('aria-label', '開啟 ' + link.title);
+    open.addEventListener('click', function (event) {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) {
+        return;
+      }
+      event.preventDefault();
+      openLink(link.url);
+    });
+
+    var edit = document.createElement('button');
+    edit.type = 'button';
+    edit.className = 'row-btn';
+    edit.innerHTML = ICON_EDIT;
+    edit.setAttribute('aria-label', '編輯 ' + link.title);
+    edit.addEventListener('click', function () { openModal(link); });
+
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'row-btn del';
+    del.innerHTML = ICON_DEL;
+    del.setAttribute('aria-label', '刪除 ' + link.title);
+    del.addEventListener('click', function () { removeLink(link.id, link.title); });
+
+    row.appendChild(a);
+    row.appendChild(open);
+    row.appendChild(edit);
+    row.appendChild(del);
+    return row;
+  }
+
+  function renderLinks() {
+    var cat = catOf(state.current);
+    var list = linksOf(cat.id);
+    linkArea.textContent = '';
+
+    var current = document.createElement('div');
+    current.className = 'current-line';
+    var label = document.createElement('span');
+    label.className = 'chip ' + (cat.id === 'writing' ? 'mint'
+      : cat.id === 'idiom' ? 'butter'
+      : cat.id === 'reading' ? 'peach'
+      : cat.id === 'media' ? 'lilac' : 'pink');
+    label.textContent = '正在看：' + cat.name;
+    current.appendChild(label);
+    linkArea.appendChild(current);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'link-list';
+
+    if (!list.length) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-note';
+      empty.textContent = '這個分類暫時未有連結。按下面的「新增連結」，貼上你的網頁網址，就可以在這裡開啟。';
+      wrap.appendChild(empty);
+    }
+
+    list.forEach(function (link) {
+      wrap.appendChild(buildLinkRow(link));
+    });
+
+    linkArea.appendChild(wrap);
+  }
+
+  /* ============ 彈窗 ============ */
+  function fillCatOptions() {
+    fCat.textContent = '';
+    CATEGORIES.forEach(function (cat) {
+      var opt = document.createElement('option');
+      opt.value = cat.id;
+      opt.textContent = cat.name;
+      fCat.appendChild(opt);
+    });
+  }
+
+  function showModal() {
+    lastFocus = document.activeElement;
+    modalMask.hidden = false;
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(function () {
+      try { fTitle.focus({ preventScroll: true }); } catch (e) { fTitle.focus(); }
+    }, 40);
+  }
+
+  function hideModal() {
+    modalMask.hidden = true;
+    document.body.style.overflow = '';
+    formErr.hidden = true;
+    formErr.textContent = '';
+    helpBody.hidden = true;
+    helpBody.textContent = '';
+    fTitle.value = '';
+    fUrl.value = '';
+    editingId = null;
+    if (lastFocus && typeof lastFocus.focus === 'function') {
+      try { lastFocus.focus({ preventScroll: true }); } catch (e) {}
+    }
+  }
+
+  function openCreate() {
+    modalTitle.textContent = '新增連結';
+    modalDesc.textContent = '填好名稱和網址，按「儲存」就會加入這個分類。';
+    helpBody.hidden = true;
+    editingId = null;
+    fCat.value = state.current;
+    formErr.hidden = true;
+    showModal();
+  }
+
+  function openModal(link) {
+    modalTitle.textContent = '編輯連結';
+    modalDesc.textContent = '修改後按「儲存」，入口會即時更新。';
+    helpBody.hidden = true;
+    editingId = link.id;
+    fTitle.value = link.title;
+    fUrl.value = link.url;
+    fCat.value = link.cat;
+    formErr.hidden = true;
+    showModal();
+  }
+
+  function showError(message) {
+    formErr.textContent = message;
+    formErr.hidden = false;
+  }
+
+  function saveFromModal() {
+    var title = fTitle.value.trim();
+    var url = fUrl.value.trim();
+    var cat = fCat.value;
+
+    if (!title) {
+      showError('請填寫名稱，例如「三年級 字形小測驗」。');
+      fTitle.focus();
+      return;
+    }
+    if (!url) {
+      showError('請填寫網址。');
+      fUrl.focus();
+      return;
+    }
+    if (!/^https?:\/\//i.test(url)) {
+      showError('網址要以 http:// 或 https:// 開始。');
+      fUrl.focus();
+      return;
+    }
+
+    if (editingId) {
+      for (var i = 0; i < state.links.length; i++) {
+        if (state.links[i].id === editingId) {
+          state.links[i] = { id: editingId, title: title.slice(0, 40), url: url.slice(0, 500), cat: cat };
+          break;
+        }
+      }
+    } else {
+      state.links.push({ id: createId(), title: title.slice(0, 40), url: url.slice(0, 500), cat: cat });
+    }
+
+    state.current = cat;
+    var ok = persist();
+    hideModal();
+    buildCards();
+    renderLinks();
+    toast(ok ? '已儲存。' : '已更新，但未能儲存在這個瀏覽器。');
+  }
+
+  function removeLink(id, title) {
+    var next = state.links.filter(function (l) { return l.id !== id; });
+    if (next.length === state.links.length) {
+      return;
+    }
+    state.links = next;
+    var ok = persist();
+    buildCards();
+    renderLinks();
+    toast(ok ? '已刪除「' + title + '」。' : '已刪除，但未能儲存在這個瀏覽器。');
+  }
+
+  /* ============ 匯出／匯入 ============ */
+  function exportLinks() {
+    var data = JSON.stringify({ app: 'tse-classroom-hub', links: state.links }, null, 2);
+    var blob = new Blob([data], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = '謝老師AI互動教室-連結備份.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+    toast('已匯出備份檔案。');
+  }
+
+  var importInput = document.createElement('input');
+  importInput.type = 'file';
+  importInput.accept = 'application/json,.json';
+  importInput.hidden = true;
+  document.body.appendChild(importInput);
+
+  function importLinks() {
+    importInput.value = '';
+    importInput.click();
+  }
+
+  importInput.addEventListener('change', function () {
+    var file = importInput.files && importInput.files[0];
+    if (!file) {
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var parsed;
+      try {
+        parsed = JSON.parse(String(reader.result || ''));
+      } catch (e) {
+        toast('檔案格式未能讀取，請確認是備份的 JSON 檔。');
+        return;
+      }
+      var incoming = parsed && Array.isArray(parsed.links) ? parsed.links : null;
+      if (!incoming) {
+        toast('檔案裡找不到連結資料。');
+        return;
+      }
+
+      var clean = incoming.map(normalizeLink).filter(Boolean);
+      if (!clean.length) {
+        toast('檔案裡沒有可用的連結。');
+        return;
+      }
+
+      var known = {};
+      state.links.forEach(function (l) { known[l.url + '|' + l.title] = true; });
+      var added = 0;
+      clean.forEach(function (l) {
+        var key = l.url + '|' + l.title;
+        if (known[key]) {
+          return;
+        }
+        known[key] = true;
+        l.id = createId();
+        state.links.push(l);
+        added += 1;
+      });
+
+      var ok = persist();
+      buildCards();
+      renderLinks();
+      toast(!ok ? '已加入，但未能儲存在這個瀏覽器。'
+        : added ? '已匯入 ' + added + ' 個連結。'
+        : '這些連結已經存在，沒有重複加入。');
+    };
+    reader.onerror = function () { toast('未能讀取這個檔案。'); };
+    reader.readAsText(file);
+  });
+
+  /* ============ 使用說明 ============ */
+  function showHelp() {
+    lastFocus = document.activeElement;
+    modalTitle.textContent = '使用說明';
+    modalDesc.textContent = '三步即可開始上課。';
+    editingId = null;
+    fTitle.value = '';
+    fUrl.value = '';
+    formErr.hidden = true;
+
+    helpBody.hidden = false;
+    helpBody.textContent = '';
+    var lines = [
+      '1. 選分類：按「語文知識、寫作工坊、成語生詞、圖書教學、AI 影片及互動遊戲」其中一個圖示。',
+      '2. 按連結：在下面的清單按名稱或箭嘴，就會開啟該網頁。',
+      '3. 自己整理：按「新增連結」貼上網址；按鉛筆圖示修改，按垃圾桶圖示刪除。',
+      '資料只儲存在這個瀏覽器（本機儲存）。轉到另一部裝置或清除瀏覽器資料前，請先按「匯出備份」下載檔案，之後在新裝置按「匯入備份」還原。'
+    ];
+    lines.forEach(function (line, index) {
+      var p = document.createElement('span');
+      p.style.display = 'block';
+      p.style.marginTop = index === 0 ? '0' : '6px';
+      p.textContent = line;
+      helpBody.appendChild(p);
+    });
+
+    showModal();
+  }
+
+  /* ============ 事件綁定 ============ */
+  function bindEvents() {
+    document.getElementById('btnAdd').addEventListener('click', openCreate);
+    document.getElementById('btnExport').addEventListener('click', exportLinks);
+    document.getElementById('btnImport').addEventListener('click', importLinks);
+    document.getElementById('btnHelp').addEventListener('click', showHelp);
+    document.getElementById('btnSave').addEventListener('click', saveFromModal);
+    document.getElementById('btnCancel').addEventListener('click', hideModal);
+    document.getElementById('btnClose').addEventListener('click', hideModal);
+
+    modalMask.addEventListener('click', function (event) {
+      if (event.target === modalMask) {
+        hideModal();
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !modalMask.hidden) {
+        hideModal();
+      }
+    });
+
+    fUrl.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveFromModal();
+      }
+    });
+  }
+
+  /* ============ 啟動 ============ */
+  function start() {
+    fillCatOptions();
+    loadState();
+    bindEvents();
+    buildCards();
+    renderLinks();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
+</script>
+</body>
+</html>
