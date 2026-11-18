@@ -717,6 +717,34 @@ h1,h2,h3,h4,p{margin:0}
       url: 'https://chinese-self-learning-portal.onrender.com/',
       cat: 'idiom',
       official: true
+    },
+    {
+      id: 'official_media_gushi',
+      title: '古詩詞網站',
+      url: 'https://nhto.github.io/gushi-classroom/',
+      cat: 'media',
+      official: true
+    },
+    {
+      id: 'official_media_xiaoben_p1',
+      title: '小一課文情景遊戲（校本單元）',
+      url: 'https://nhto.github.io/xiaoben-p1-classroom/',
+      cat: 'media',
+      official: true
+    },
+    {
+      id: 'official_media_woai_p1',
+      title: '小一課文情景遊戲（我愛學語文）',
+      url: 'https://nhto.github.io/woai-p1-classroom/',
+      cat: 'media',
+      official: true
+    },
+    {
+      id: 'official_media_woai_p4',
+      title: '小四課文情景遊戲',
+      url: 'https://nhto.github.io/woai-p4-classroom/',
+      cat: 'media',
+      official: true
     }
   ];
   var state = {
@@ -884,9 +912,9 @@ h1,h2,h3,h4,p{margin:0}
       btn.addEventListener('click', function () {
         state.current = cat.id;
         renderLinks();
-        var home = officialOf(cat.id)[0];
-        if (home) {
-          openLink(home.url);
+        var homes = officialOf(cat.id);
+        if (homes.length === 1) {
+          openLink(homes[0].url);
           return;
         }
         linkArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
