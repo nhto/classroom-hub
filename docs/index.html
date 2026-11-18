@@ -696,10 +696,47 @@ h1,h2,h3,h4,p{margin:0}
 
   /* ============ 模型：狀態與本機儲存 ============ */
   var STORAGE_KEY = 'tse_classroom_hub_v2';
+  var OFFICIAL_LINKS = [
+    {
+      id: 'official_chinese',
+      title: '語文知識',
+      url: 'https://nhto.github.io/yuwen-zhishi/',
+      cat: 'chinese',
+      official: true
+    },
+    {
+      id: 'official_writing',
+      title: '寫作教學',
+      url: 'https://nhto.github.io/xiezuo-jiaoxue-pages/',
+      cat: 'writing',
+      official: true
+    },
+    {
+      id: 'official_idiom',
+      title: '成語生詞',
+      url: 'https://chinese-self-learning-portal.onrender.com/',
+      cat: 'idiom',
+      official: true
+    }
+  ];
   var state = {
     links: [],
     current: CATEGORIES[0].id
   };
+
+  function sameUrl(a, b) {
+    return String(a || '').replace(/\/+$/, '') === String(b || '').replace(/\/+$/, '');
+  }
+
+  function isOfficialLink(link) {
+    if (!link) { return false; }
+    if (link.official || String(link.id || '').indexOf('official_') === 0) { return true; }
+    return OFFICIAL_LINKS.some(function (d) { return d.id === link.id || sameUrl(d.url, link.url); });
+  }
+
+  function officialOf(catId) {
+    return OFFICIAL_LINKS.filter(function (l) { return l.cat === catId; });
+  }
 
   function createId() {
     return 'l_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -740,7 +777,9 @@ h1,h2,h3,h4,p{margin:0}
     if (!parsed || !Array.isArray(parsed.links)) {
       return;
     }
-    state.links = parsed.links.map(normalizeLink).filter(Boolean);
+    state.links = parsed.links.map(normalizeLink).filter(Boolean).filter(function (l) {
+      return !isOfficialLink(l);
+    });
   }
 
   function persist() {
@@ -763,7 +802,7 @@ h1,h2,h3,h4,p{margin:0}
   }
 
   function linksOf(catId) {
-    return state.links.filter(function (l) { return l.cat === catId; });
+    return officialOf(catId).concat(state.links.filter(function (l) { return l.cat === catId; }));
   }
 
   /* ============ DOM 參照 ============ */
@@ -845,6 +884,11 @@ h1,h2,h3,h4,p{margin:0}
       btn.addEventListener('click', function () {
         state.current = cat.id;
         renderLinks();
+        var home = officialOf(cat.id)[0];
+        if (home) {
+          openLink(home.url);
+          return;
+        }
         linkArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
 
@@ -914,24 +958,26 @@ h1,h2,h3,h4,p{margin:0}
       openLink(link.url);
     });
 
-    var edit = document.createElement('button');
-    edit.type = 'button';
-    edit.className = 'row-btn';
-    edit.innerHTML = ICON_EDIT;
-    edit.setAttribute('aria-label', '編輯 ' + link.title);
-    edit.addEventListener('click', function () { openModal(link); });
-
-    var del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'row-btn del';
-    del.innerHTML = ICON_DEL;
-    del.setAttribute('aria-label', '刪除 ' + link.title);
-    del.addEventListener('click', function () { removeLink(link.id, link.title); });
-
     row.appendChild(a);
     row.appendChild(open);
-    row.appendChild(edit);
-    row.appendChild(del);
+    if (!isOfficialLink(link)) {
+      var edit = document.createElement('button');
+      edit.type = 'button';
+      edit.className = 'row-btn';
+      edit.innerHTML = ICON_EDIT;
+      edit.setAttribute('aria-label', '編輯 ' + link.title);
+      edit.addEventListener('click', function () { openModal(link); });
+
+      var del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'row-btn del';
+      del.innerHTML = ICON_DEL;
+      del.setAttribute('aria-label', '刪除 ' + link.title);
+      del.addEventListener('click', function () { removeLink(link.id, link.title); });
+
+      row.appendChild(edit);
+      row.appendChild(del);
+    }
     return row;
   }
 
