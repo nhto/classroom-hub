@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>謝老師 AI 互動教室｜茶文化圖書教學</title>
+<meta name="description" content="古風山水水彩繪本風格入口網頁，整合茶文化互動遊戲、《中國茶》繪本遊戲與繪本影片。">
+<script src="https://yiyanstatic.cdn.bcebos.com/advisory/tailwindcss.js"></script>
+<style>
+:root{
+  --ink:#2f3a36;
+  --ink-soft:#5b6a63;
+  --paper:#f7f2e6;
+  --jade:#4f7d6a;
+  --moss:#7d9a72;
+  --mist:#e7e3d6;
+  --clay:#b98a62;
+  --plum:#9a6a76;
+  --gold:#c19a5b;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;max-width:100%;}
+body{
+  background-color:var(--paper);
+  color:var(--ink);
+  font-family:"PingFang TC","PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+input{font:inherit;}
+.display{
+  font-family:"Songti TC","Songti HK","Noto Serif TC","PMingLiU",serif;
+  letter-spacing:.06em;
+}
+
+/* ---------- 水彩紙張與暈染底層 ---------- */
+.paper-layer{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.paper-layer .grain{
+  position:absolute;inset:0;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='240' height='240' filter='url(%23g)' opacity='0.16'/></svg>");
+  mix-blend-mode:multiply;
+}
+.paper-layer .fibre{
+  position:absolute;inset:0;opacity:.55;
+  background-image:
+    repeating-linear-gradient(96deg, rgba(120,105,80,.035) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(6deg, rgba(120,105,80,.025) 0 1px, transparent 1px 9px);
+}
+.wash{position:absolute;border-radius:50%;filter:blur(42px);opacity:.55;mix-blend-mode:multiply;}
+.w1{width:62vw;height:42vh;left:-14vw;top:6vh;background:radial-gradient(circle at 50% 50%, rgba(158,186,168,.55), rgba(158,186,168,0) 68%);}
+.w2{width:54vw;height:38vh;right:-12vw;top:20vh;background:radial-gradient(circle at 50% 50%, rgba(190,196,214,.5), rgba(190,196,214,0) 70%);}
+.w3{width:58vw;height:40vh;left:18vw;bottom:-10vh;background:radial-gradient(circle at 50% 50%, rgba(214,190,160,.42), rgba(214,190,160,0) 70%);}
+
+/* ---------- 山水手繪插畫 ---------- */
+.landscape{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.82;
+}
+.landscape svg{width:100%;height:100%;display:block;}
+.mountain{fill:url(#mtnWash);}
+.mountain--back{fill:url(#mtnBack);opacity:.85;}
+.mist-band{fill:#faf7ee;opacity:.55;}
+.ridge{fill:none;stroke:#6f7f76;stroke-width:1.1;stroke-linecap:round;opacity:.38;}
+.pine{fill:none;stroke:#4d6157;stroke-width:1.3;stroke-linecap:round;opacity:.45;}
+.tea-leaf{opacity:.4;}
+.sprinkle{opacity:.32;}
+
+/* ---------- 版面 ---------- */
+.wrap{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;padding:18px 16px 40px;}
+@media (min-width:900px){ .wrap{padding:26px 40px 56px;} }
+
+.topbar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:14px;}
+.ghost-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:999px;
+  font-size:15px;line-height:1.4;
+  background:rgba(255,255,255,.55);
+  border:1px solid rgba(79,125,106,.3);
+  color:#3f5f52;
+  backdrop-filter:blur(4px);
+  transition:background .2s ease,border-color .2s ease;
+}
+.ghost-btn:hover{background:rgba(255,255,255,.85);border-color:rgba(79,125,106,.55);}
+.ghost-btn svg{width:18px;height:18px;flex-shrink:0;}
+
+.hero{
+  position:relative;
+  padding:18px 4px 8px;
+  max-width:900px;
+}
+@media (min-width:900px){ .hero{padding:8px 4px 4px;} }
+.hero h1{
+  font-size:clamp(26px,7vw,46px);
+  line-height:1.35;margin:0 0 6px;
+  font-weight:700;color:#26352f;
+  text-shadow:0 1px 0 rgba(255,255,255,.6);
+}
+.hero .sub{
+  display:inline-block;margin:0;
+  font-size:clamp(16px,4.4vw,21px);
+  letter-spacing:.14em;color:#41604f;
+  padding:2px 0 4px;
+  border-bottom:1.5px solid rgba(79,125,106,.32);
+}
+.hero .intro{
+  margin:12px 0 0;max-width:520px;
+  font-size:16px;color:var(--ink-soft);
+}
+.seal{
+  position:absolute;right:0;top:4px;
+  width:58px;height:58px;border-radius:9px;
+  border:1.5px solid rgba(178,86,74,.55);
+  color:#a8483f;display:flex;align-items:center;justify-content:center;
+  font-family:"Songti TC",serif;font-size:13px;line-height:1.15;
+  letter-spacing:0;writing-mode:vertical-rl;
+  background:rgba(255,255,255,.35);
+  opacity:.85;
+}
+@media (max-width:640px){ .seal{width:48px;height:48px;font-size:11px;top:0;} }
+
+/* ---------- 卷軸卡片 ---------- */
+.scroll-cards{
+  margin-top:26px;
+  display:grid;grid-template-columns:1fr;gap:22px;
+}
+@media (min-width:760px){
+  .scroll-cards{grid-template-columns:repeat(3,1fr);gap:24px;margin-top:34px;}
+}
+.scroll-card{
+  position:relative;
+  display:flex;flex-direction:column;
+  text-align:left;
+  padding:0;overflow:hidden;
+  border-radius:6px;
+  background:linear-gradient(180deg, #fffdf6 0%, #fbf6e9 60%, #f6efdd 100%);
+  box-shadow:
+    0 1px 2px rgba(96,82,60,.06),
+    0 6px 14px rgba(96,82,60,.08),
+    0 18px 36px rgba(96,82,60,.06);
+  transition:transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease;
+  isolation:isolate;
+}
+.scroll-card::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  border-radius:6px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='200' height='200' filter='url(%23p)' opacity='0.13'/></svg>");
+  mix-blend-mode:multiply;opacity:.7;
+}
+/* ---------- 手撕水彩紙毛邊（不遮擋內容） ---------- */
+.wash-frame{position:relative;border-radius:7px;}
+.wash-frame .edge{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  border-radius:7px;
+  box-shadow:inset 0 0 0 1px rgba(150,138,112,.35);
+}
+.scroll-card:hover{transform:translateY(-3px);
+  box-shadow:0 2px 4px rgba(96,82,60,.07),0 12px 22px rgba(96,82,60,.11),0 26px 48px rgba(96,82,60,.07);}
+.scroll-card:focus-visible{outline:3px solid rgba(79,125,106,.55);outline-offset:3px;}
+
+.card-body{position:relative;z-index:2;padding:20px 18px 18px;display:flex;flex-direction:column;flex:1;}
+.card-art{position:relative;z-index:2;height:132px;overflow:hidden;}
+@media (min-width:760px){ .card-art{height:150px;} }
+.card-art svg{width:100%;height:100%;display:block;}
+.card-kicker{
+  position:relative;z-index:2;
+  font-size:12.5px;letter-spacing:.22em;color:#7b8b80;
+  padding:0 18px;margin-top:4px;
+}
+.card-title{
+  position:relative;z-index:2;
+  font-family:"Songti TC","Noto Serif TC",serif;
+  font-size:20px;font-weight:700;color:#2c3a34;
+  margin:4px 18px 0;line-height:1.5;
+}
+.card-text{
+  position:relative;z-index:2;
+  font-size:15.5px;color:#57655c;
+  margin:6px 18px 0;flex:1;
+}
+.card-cta{
+  position:relative;z-index:2;
+  margin:14px 18px 16px;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:10px 16px;border-radius:4px;
+  font-size:16px;font-weight:600;
+  background:rgba(79,125,106,.1);
+  border:1px solid rgba(79,125,106,.42);
+  color:#35604f;
+  transition:background .2s ease,color .2s ease;
+}
+.scroll-card:hover .card-cta{background:rgba(79,125,106,.9);color:#fdfaf0;border-color:transparent;}
+.card-cta svg{width:17px;height:17px;flex-shrink:0;}
+.card-num{
+  position:absolute;right:14px;bottom:10px;z-index:2;
+  font-family:"Songti TC",serif;font-size:13px;color:#a89a80;letter-spacing:.1em;
+}
+
+/* ---------- 未設定網址提示 ---------- */
+.hint{
+  position:relative;z-index:4;
+  margin:0 18px 16px;padding:9px 12px;
+  font-size:14px;line-height:1.6;
+  background:rgba(193,154,91,.13);
+  border:1px dashed rgba(160,120,66,.45);
+  border-radius:4px;color:#7d5c2e;
+  display:none;
+}
+.hint.show{display:block;}
+
+/* ---------- 設定面板 ---------- */
+.panel-mask{
+  position:fixed;inset:0;z-index:40;background:rgba(52,60,54,.3);
+  backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:opacity .25s ease;
+}
+.panel-mask.open{opacity:1;pointer-events:auto;}
+.panel{
+  position:fixed;z-index:41;top:0;right:0;bottom:0;width:min(92vw,400px);
+  background:linear-gradient(180deg,#fdfaf1,#f6f0e0);
+  box-shadow:-8px 0 28px rgba(70,62,48,.16);
+  transform:translateX(102%);transition:transform .32s cubic-bezier(.2,.8,.2,1);
+  display:flex;flex-direction:column;
+}
+.panel.open{transform:translateX(0);}
+.panel-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:20px 20px 12px;
+}
+.panel-head h2{
+  font-family:"Songti TC",serif;font-size:20px;margin:0;color:#2c3a34;
+}
+.panel-head p{margin:4px 0 0;font-size:14px;color:#6b7a71;}
+.close-btn{
+  width:36px;height:36px;flex-shrink:0;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(79,125,106,.1);color:#3f5f52;
+}
+.close-btn svg{width:18px;height:18px;}
+.panel-body{padding:6px 20px 16px;overflow-y:auto;flex:1;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:14px;font-weight:600;color:#3d4f46;margin-bottom:5px;}
+.field input{
+  width:100%;padding:9px 11px;font-size:15px;
+  border:1px solid rgba(79,125,106,.32);border-radius:5px;
+  background:#fffdf7;color:#2f3a36;
+}
+.field input:focus{outline:2px solid rgba(79,125,106,.45);outline-offset:0;}
+.field .tip{display:block;margin-top:4px;font-size:12.5px;color:#8a958d;}
+.panel-actions{display:flex;gap:10px;padding:4px 20px 22px;}
+.btn-solid,.btn-line{
+  flex:1;padding:11px 14px;border-radius:5px;font-size:15px;font-weight:600;text-align:center;
+}
+.btn-solid{background:#4f7d6a;color:#fdfaf0;}
+.btn-solid:hover{background:#446d5c;}
+.btn-line{border:1px solid rgba(79,125,106,.4);color:#3f5f52;background:transparent;}
+.btn-line:hover{background:rgba(79,125,106,.08);}
+
+/* ---------- 頁腳 ---------- */
+.foot{
+  position:relative;z-index:1;
+  margin-top:34px;padding-top:16px;
+  border-top:1px dashed rgba(120,110,90,.28);
+  font-size:13.5px;color:#8a8577;
+  display:flex;flex-wrap:wrap;gap:6px 16px;
+}
+.foot span{white-space:nowrap;}
+
+/* ---------- 浮動茶葉妝飾 ---------- */
+.leaf-drift{
+  position:fixed;z-index:1;pointer-events:none;border-radius:100% 0 100% 0;
+  background:linear-gradient(140deg, rgba(122,152,112,.5), rgba(122,152,112,.12));
+  opacity:0;
+  animation:drift linear infinite;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,-8vh,0) rotate(0deg);opacity:0;}
+  12%{opacity:.5;}
+  88%{opacity:.4;}
+  100%{transform:translate3d(-14vw,108vh,0) rotate(220deg);opacity:0;}
+}
+@media (prefers-reduced-motion:reduce){
+  .leaf-drift{display:none;}
+  .scroll-card{transition:none;}
+}
+
+/* ---------- 水潤暈染背景裝飾 ---------- */
+.bloom{
+  position:absolute;border-radius:50%;pointer-events:none;
+  filter:blur(10px);mix-blend-mode:multiply;
+}
+</style>
+</head>
+<body data-generated-by="aurora-frontend-design">
+
+<!-- ============ SVG 水彩色與手繪濾鏡 ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 手撕水彩紙毛邊 -->
+    <filter id="roughEdge" x="-6%" y="-6%" width="112%" height="112%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.022 0.03" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- 柔和水彩暈染（山巒用） -->
+    <filter id="washEdge" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="4" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="1.4"/>
+    </filter>
+    <!-- 紙面顆粒 -->
+    <filter id="grainy">
+      <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" result="t"/>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0 0.42  0 0 0 0.14 0" result="c"/>
+      <feComposite in="c" in2="SourceGraphic" operator="over"/>
+    </filter>
+
+    <linearGradient id="mtnWash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fa8a0" stop-opacity=".62"/>
+      <stop offset="55%" stop-color="#a9bdb2" stop-opacity=".42"/>
+      <stop offset="100%" stop-color="#c9d3c4" stop-opacity=".12"/>
+    </linearGradient>
+    <linearGradient id="mtnBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b9b6c6" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#cfc9c4" stop-opacity=".08"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dfe4dc" stop-opacity=".65"/>
+      <stop offset="100%" stop-color="#eef0e7" stop-opacity=".1"/>
+    </linearGradient>
+    <radialGradient id="teaWash" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#9cb389" stop-opacity=".55"/>
+      <stop offset="70%" stop-color="#9cb389" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#9cb389" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cupWash" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#b98a62" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#b98a62" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="scrollWash" cx="50%" cy="50%" r="58%">
+      <stop offset="0%" stop-color="#a08fa8" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#a08fa8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+
+<!-- ============ 山水水彩背景 ============ -->
+<div class="paper-layer" aria-hidden="true">
+  <div class="wash w1"></div>
+  <div class="wash w2"></div>
+  <div class="wash w3"></div>
+  <div class="fibre"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="landscape" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <g filter="url(#washEdge)">
+      <path class="mountain mountain--back" d="M-40 470 C 120 392 210 440 320 388 C 430 336 520 372 640 330 C 760 288 860 350 980 320 C 1100 290 1210 344 1320 322 C 1390 308 1430 330 1480 320 L1480 520 L-40 520 Z"/>
+      <path class="mountain" d="M-40 560 C 110 500 210 540 330 496 C 450 452 540 500 660 470 C 780 440 880 486 1000 462 C 1120 438 1230 486 1340 466 C 1400 456 1440 470 1480 464 L1480 640 L-40 640 Z"/>
+      <path d="M-40 640 C 160 604 320 636 480 616 C 640 596 800 630 960 612 C 1120 594 1280 626 1480 604 L1480 760 L-40 760 Z" fill="url(#water)"/>
+    </g>
+
+    <!-- 水霧帶 -->
+    <g filter="url(#washEdge)">
+      <ellipse class="mist-band" cx="380" cy="556" rx="360" ry="26"/>
+      <ellipse class="mist-band" cx="1050" cy="512" rx="320" ry="20"/>
+      <ellipse class="mist-band" cx="700" cy="640" rx="520" ry="30" opacity=".38"/>
+    </g>
+
+    <!-- 山脊手繪線 -->
+    <path class="ridge" d="M60 546 C 150 520 220 548 300 528 C 380 508 430 528 500 514"/>
+    <path class="ridge" d="M960 500 C 1040 482 1120 506 1200 490 C 1270 476 1330 494 1400 486"/>
+    <path class="ridge" d="M420 606 C 520 592 620 610 720 598"/>
+
+    <!-- 遠處茶園梯田 -->
+    <g class="sprinkle" stroke="#7d9a72" stroke-width="1.2" fill="none" stroke-linecap="round">
+      <path d="M120 610 C 220 600 300 612 400 604"/>
+      <path d="M150 626 C 250 616 330 628 430 620"/>
+      <path d="M180 642 C 280 632 360 644 460 636"/>
+      <path d="M980 596 C 1080 586 1160 598 1260 590"/>
+      <path d="M1010 612 C 1110 602 1190 614 1290 606"/>
+    </g>
+
+    <!-- 松枝 -->
+    <g class="pine">
+      <path d="M96 520 C 106 486 100 460 112 432"/>
+      <path d="M112 452 C 92 444 80 432 74 418"/>
+      <path d="M112 466 C 134 458 148 446 156 432"/>
+      <path d="M1318 508 C 1328 474 1322 448 1334 420"/>
+      <path d="M1334 440 C 1314 432 1302 420 1296 406"/>
+      <path d="M1334 454 C 1356 446 1370 434 1378 420"/>
+    </g>
+
+    <!-- 茶枝葉 -->
+    <g class="tea-leaf">
+      <path d="M1240 690 C 1290 660 1340 668 1382 640" stroke="#7d9a72" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="1284" cy="672" rx="13" ry="6" fill="#8fae80" transform="rotate(-18 1284 672)"/>
+      <ellipse cx="1330" cy="662" rx="12" ry="6" fill="#9cb98b" transform="rotate(14 1330 662)"/>
+      <ellipse cx="1372" cy="646" rx="11" ry="5.5" fill="#8fae80" transform="rotate(-12 1372 646)"/>
+      <path d="M120 742 C 172 720 214 726 252 704" stroke="#7d9a72" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="164" cy="732" rx="12" ry="5.5" fill="#9cb98b" transform="rotate(-16 164 732)"/>
+      <ellipse cx="212" cy="722" rx="11" ry="5" fill="#8fae80" transform="rotate(12 212 722)"/>
+    </g>
+
+    <!-- 水彩潑色點 -->
+    <g filter="url(#washEdge)" opacity=".5">
+      <circle cx="250" cy="300" r="70" fill="url(#teaWash)"/>
+      <circle cx="1180" cy="330" r="86" fill="url(#cupWash)" opacity=".7"/>
+      <circle cx="820" cy="250" r="60" fill="url(#scrollWash)"/>
+    </g>
+  </svg>
+</div>
+
+<div class="wrap">
+
+  <!-- 頂部工具列 -->
+  <div class="topbar">
+    <button class="ghost-btn" id="openPanel" aria-haspopup="true" aria-expanded="false" aria-controls="panel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9.5 14.5 5 19l-2-2 4.5-4.5"/><path d="M14.5 9.5 19 5l2 2-4.5 4.5"/>
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="3.2"/>
+      </svg>
+      <span>連結設定</span>
+    </button>
+  </div>
+
+  <!-- 標題區 -->
+  <header class="hero">
+    <div class="seal" aria-hidden="true">茶事</div>
+    <h1 class="display">謝老師 AI 互動教室</h1>
+    <p class="sub display">茶文化圖書教學</p>
+    <p class="intro">一盞清茶，一卷山水。揀一頁，慢慢看，慢慢學。</p>
+  </header>
+
+  <!-- 三卷圖卡 -->
+  <main class="scroll-cards">
+    <button class="scroll-card" data-index="0" aria-label="茶文化互動遊戲，點擊開啟">
+      <div class="card-art" aria-hidden="true">
+        <svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice">
+          <g filter="url(#washEdge)">
+            <circle cx="196" cy="76" r="62" fill="url(#teaWash)"/>
+          </g>
+          <!-- 茶壺 -->
+          <g filter="url(#washEdge)">
+            <path d="M132 78 q0 -16 22 -18 q24 -2 30 10 q6 14 -8 20 q-22 8 -40 -1 q-6 -4 -4 -11 Z" fill="#cbb79c" opacity=".9"/>
+            <path d="M182 74 q12 -6 16 2 q4 8 -8 12" fill="none" stroke="#b39f84" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M132 80 q-12 2 -14 10 q-2 9 12 10" fill="none" stroke="#b39f84" stroke-width="3.4" stroke-linecap="round"/>
+            <path d="M150 60 q4 -7 14 -6" fill="none" stroke="#b39f84" stroke-width="3.2" stroke-linecap="round"/>
+          </g>
+          <!-- 茶杯 -->
+          <g filter="url(#washEdge)">
+            <path d="M210 100 q16 -3 28 0 q-2 13 -14 13 q-12 0 -14 -13 Z" fill="#d8c9b2"/>
+            <path d="M96 108 q14 -3 24 0 q-1 11 -12 11 q-11 0 -12 -11 Z" fill="#d8c9b2" opacity=".85"/>
+          </g>
+          <!-- 茶葉 -->
+          <ellipse cx="96" cy="70" rx="13" ry="6" fill="#8fae80" opacity=".85" transform="rotate(-20 96 70)"/>
+          <ellipse cx="248" cy="56" rx="11" ry="5" fill="#9cb98b" opacity=".8" transform="rotate(16 248 56)"/>
+          <!-- 水氣 -->
+          <path d="M164 46 q8 -10 0 -20" stroke="#b9c8bd" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/>
+        </svg>
+      </div>
+      <div class="card-kicker">卷一</div>
+      <h2 class="card-title">茶文化互動遊戲</h2>
+      <p class="card-text">從採茶、泡茶到識茶器，動動手指闖一關。</p>
+      <span class="card-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        開始體驗
+      </span>
+      <span class="card-num">一</span>
+      <div class="hint" id="hint-0">尚未設定網址，點右上角「連結設定」貼上連結。</div>
+    </button>
+
+    <button class="scroll-card" data-index="1" aria-label="中國茶繪本互動遊戲，點擊開啟">
+      <div class="card-art" aria-hidden="true">
+        <svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice">
+          <g filter="url(#washEdge)">
+            <circle cx="160" cy="78" r="64" fill="url(#scrollWash)" opacity=".8"/>
+          </g>
+          <!-- 攤開的繪本 -->
+          <g filter="url(#washEdge)">
+            <path d="M78 60 q40 -8 82 2 q42 -10 82 -2 l0 54 q-40 -6 -82 2 q-42 -8 -82 -2 Z" fill="#fffdf4" stroke="#b6a68c" stroke-width="1.6"/>
+            <path d="M160 62 l0 54" stroke="#c3b49b" stroke-width="1.4"/>
+          </g>
+          <!-- 書上的茶山 -->
+          <g filter="url(#washEdge)" opacity=".92">
+            <path d="M88 92 q22 -22 44 0 q-22 8 -44 0 Z" fill="#a8bda8" opacity=".75"/>
+            <path d="M116 92 q18 -18 36 0 q-18 7 -36 0 Z" fill="#93ad96" opacity=".7"/>
+            <path d="M186 90 q22 -16 44 0 q-22 7 -44 0 Z" fill="#a8bda8" opacity=".7"/>
+            <path d="M206 98 q20 -14 40 0 q-20 6 -40 0 Z" fill="#93ad96" opacity=".65"/>
+          </g>
+          <!-- 茶杯插圖 -->
+          <g filter="url(#washEdge)">
+            <path d="M200 62 q12 -2 22 0 q-1 10 -11 10 q-10 0 -11 -10 Z" fill="#cf9a74" opacity=".9"/>
+          </g>
+          <path d="M100 46 q14 -6 26 0" stroke="#c3b49b" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M186 42 q16 -6 30 0" stroke="#c3b49b" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="card-kicker">卷二</div>
+      <h2 class="card-title">《中國茶》繪本互動遊戲</h2>
+      <p class="card-text">翻開繪本，一邊聽故事，一邊動手玩。</p>
+      <span class="card-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        翻開繪本
+      </span>
+      <span class="card-num">二</span>
+      <div class="hint" id="hint-1">尚未設定網址，點右上角「連結設定」貼上連結。</div>
+    </button>
+
+    <button class="scroll-card" data-index="2" aria-label="中國茶繪本影片，點擊開啟">
+      <div class="card-art" aria-hidden="true">
+        <svg viewBox="0 0 320 150" preserveAspectRatio="xMidYMid slice">
+          <g filter="url(#washEdge)">
+            <circle cx="160" cy="76" r="62" fill="url(#cupWash)" opacity=".65"/>
+          </g>
+          <!-- 捲軸 -->
+          <g filter="url(#washEdge)">
+            <rect x="112" y="46" width="96" height="58" rx="4" fill="#f7f0dd" stroke="#c0ae90" stroke-width="1.5"/>
+            <rect x="104" y="40" width="10" height="70" rx="4" fill="#c9b494"/>
+            <rect x="206" y="40" width="10" height="70" rx="4" fill="#c9b494"/>
+            <path d="M124 70 q20 -12 38 0 q-18 10 -38 0 Z" fill="#a8bda8" opacity=".7"/>
+            <path d="M152 84 q18 -10 34 0 q-16 8 -34 0 Z" fill="#93ad96" opacity=".65"/>
+          </g>
+          <!-- 播放鈕 -->
+          <g>
+            <circle cx="160" cy="98" r="17" fill="#4f7d6a" opacity=".92"/>
+            <path d="M155 90 l12 8 l-12 8 Z" fill="#fdfaf0"/>
+          </g>
+          <ellipse cx="96" cy="56" rx="12" ry="5.5" fill="#8fae80" opacity=".8" transform="rotate(-18 96 56)"/>
+          <ellipse cx="236" cy="104" rx="11" ry="5" fill="#9cb98b" opacity=".75" transform="rotate(14 236 104)"/>
+        </svg>
+      </div>
+      <div class="card-kicker">卷三</div>
+      <h2 class="card-title">《中國茶》繪本影片</h2>
+      <p class="card-text">靜靜看一段影片，聽茶的故事。</p>
+      <span class="card-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        前往觀看
+      </span>
+      <span class="card-num">三</span>
+      <div class="hint" id="hint-2">尚未設定網址，點右上角「連結設定」貼上連結。</div>
+    </button>
+  </main>
+
+  <footer class="foot">
+    <span>茶文化圖書教學</span>
+    <span>共三卷：遊戲 · 繪本 · 影片</span>
+    <span>連結保存在本機電腦</span>
+  </footer>
+</div>
+
+<!-- ============ 連結設定面板 ============ -->
+<div class="panel-mask" id="mask"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" aria-hidden="true">
+  <div class="panel-head">
+    <div>
+      <h2 id="panel-title" class="display">連結設定</h2>
+      <p>貼上原有網頁網址，按一下圖卡即可開啟。</p>
+    </div>
+    <button class="close-btn" id="closePanel" aria-label="關閉設定面板">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+
+  <div class="panel-body">
+    <div class="field">
+      <label for="link0">卷一 · 茶文化互動遊戲</label>
+      <input id="link0" type="url" inputmode="url" placeholder="例如：https://example.com/tea-game" autocomplete="off">
+      <span class="tip">可留空，稍後再設定。</span>
+    </div>
+    <div class="field">
+      <label for="link1">卷二 · 《中國茶》繪本互動遊戲</label>
+      <input id="link1" type="url" inputmode="url" placeholder="例如：https://example.com/tea-story-game" autocomplete="off">
+      <span class="tip">可留空，稍後再設定。</span>
+    </div>
+    <div class="field">
+      <label for="link2">卷三 · 《中國茶》繪本影片</label>
+      <input id="link2" type="url" inputmode="url" placeholder="例如：https://example.com/tea-story-video" autocomplete="off">
+      <span class="tip">可留空，稍後再設定。</span>
+    </div>
+  </div>
+
+  <div class="panel-actions">
+    <button class="btn-solid" id="saveLinks">儲存設定</button>
+    <button class="btn-line" id="clearLinks">清除</button>
+  </div>
+</aside>
+
+<script>
+(function(){
+  'use strict';
+  var KEY = 'tea-classroom-links-v1';
+  var inputs = [document.getElementById('link0'), document.getElementById('link1'), document.getElementById('link2')];
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.scroll-card'));
+  var hints = [document.getElementById('hint-0'), document.getElementById('hint-1'), document.getElementById('hint-2')];
+  var panel = document.getElementById('panel');
+  var mask = document.getElementById('mask');
+  var openBtn = document.getElementById('openPanel');
+  var closeBtn = document.getElementById('closePanel');
+  var saveBtn = document.getElementById('saveLinks');
+  var clearBtn = document.getElementById('clearLinks');
+  var toast = null;
+
+  function safeGet(){
+    try{
+      var raw = window.localStorage.getItem(KEY);
+      if(!raw) return ['','',''];
+      var arr = JSON.parse(raw);
+      if(!Array.isArray(arr)) return ['','',''];
+      return [0,1,2].map(function(i){ return typeof arr[i] === 'string' ? arr[i] : ''; });
+    }catch(e){ return ['','','']; }
+  }
+
+  function safeSet(list){
+    try{ window.localStorage.setItem(KEY, JSON.stringify(list)); return true; }
+    catch(e){ return false; }
+  }
+
+  function safeRemove(){
+    try{ window.localStorage.removeItem(KEY); }catch(e){}
+  }
+
+  function isUrl(v){
+    if(!v) return false;
+    return /^https?:\/\/[^\s.]+\.[^\s]+$/i.test(v.trim());
+  }
+
+  function openUrl(url){
+    if(isUrl(url)){
+      window.open(url.trim(), '_blank', 'noopener');
+      return true;
+    }
+    return false;
+  }
+
+  function showToast(msg){
+    if(toast){ toast.parentNode.removeChild(toast); toast = null; }
+    var d = document.createElement('div');
+    d.textContent = msg;
+    d.setAttribute('role','status');
+    d.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;'
+      + 'padding:10px 18px;border-radius:8px;font-size:15px;max-width:82vw;text-align:center;'
+      + 'background:#3f5f52;color:#fdfaf0;box-shadow:0 6px 18px rgba(60,70,60,.25);';
+    document.body.appendChild(d);
+    toast = d;
+    window.setTimeout(function(){
+      if(toast === d && d.parentNode){ d.parentNode.removeChild(d); toast = null; }
+    }, 2600);
+  }
+
+  function render(saved){
+    cards.forEach(function(card, i){
+      var url = saved[i];
+      card.setAttribute('data-url', url);
+      hints[i].classList.toggle('show', !url);
+      card.setAttribute('aria-label',
+        (i === 0 ? '茶文化互動遊戲' : (i === 1 ? '中國茶繪本互動遊戲' : '中國茶繪本影片')) +
+        (url ? '，點擊開啟' : '，尚未設定網址，點擊前往設定')
+      );
+    });
+  }
+
+  function openPanel(){
+    var saved = safeGet();
+    inputs.forEach(function(inp, i){ inp.value = saved[i]; });
+    mask.classList.add('open');
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden','false');
+    openBtn.setAttribute('aria-expanded','true');
+    window.setTimeout(function(){ inputs[0].focus(); }, 260);
+  }
+
+  function closePanel(){
+    mask.classList.remove('open');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden','true');
+    openBtn.setAttribute('aria-expanded','false');
+    openBtn.focus();
+  }
+
+  cards.forEach(function(card, i){
+    card.addEventListener('click', function(){
+      var url = card.getAttribute('data-url') || '';
+      if(openUrl(url)) return;
+      if(!url){
+        openPanel();
+        window.setTimeout(function(){ inputs[i].focus(); }, 280);
+        return;
+      }
+      showToast('網址格式不正確，請重新設定。');
+      openPanel();
+      window.setTimeout(function(){ inputs[i].focus(); }, 280);
+    });
+  });
+
+  openBtn.addEventListener('click', openPanel);
+  closeBtn.addEventListener('click', closePanel);
+  mask.addEventListener('click', closePanel);
+
+  saveBtn.addEventListener('click', function(){
+    var list = inputs.map(function(inp){ return inp.value.trim(); });
+    var ok = safeSet(list);
+    render(list);
+    closePanel();
+    showToast(ok ? '已儲存設定。' : '無法儲存在此瀏覽器，設定暫時生效。');
+  });
+
+  clearBtn.addEventListener('click', function(){
+    inputs.forEach(function(inp){ inp.value = ''; });
+    safeRemove();
+    render(['','','']);
+    showToast('已清除全部連結。');
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && panel.classList.contains('open')) closePanel();
+  });
+
+  // 首次載入：讀取本機設定
+  render(safeGet());
+})();
+</script>
+
+<script>
+// 飄落茶葉妝飾（最多 9 片，動畫上限 1 次播放）
+(function(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var layer = document.body;
+  for(var i = 0; i < 9; i++){
+    var leaf = document.createElement('div');
+    leaf.className = 'leaf-drift';
+    var size = 9 + (i % 4) * 3;
+    leaf.style.width = size + 'px';
+    leaf.style.height = (size * 1.6) + 'px';
+    leaf.style.left = (6 + i * 10.5) + 'vw';
+    leaf.style.animationDuration = (22 + (i % 5) * 5) + 's';
+    leaf.style.animationDelay = (-i * 4.4) + 's';
+    layer.appendChild(leaf);
+    (function(el){
+      el.addEventListener('animationend', function(){
+        if(el.parentNode) el.parentNode.removeChild(el);
+      });
+    })(leaf);
+  }
+})();
+</script>
+
+</body>
+</html>
