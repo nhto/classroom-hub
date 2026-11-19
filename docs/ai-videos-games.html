@@ -1182,6 +1182,8 @@
     });
   });
 
+  DEFAULT_LINKS['game|p4'] = 'https://nhto.github.io/woai-p4-classroom/';
+
   var POEMGAME_PAGES = {
     p1: 'https://nhto.github.io/gushi-classroom/小一古詩詞文.html',
     p2: 'https://nhto.github.io/gushi-classroom/小二古詩詞文.html',
@@ -1487,7 +1489,7 @@
 
     var tip = document.createElement('p');
     tip.className = 'qr-tip';
-    tip.textContent = url.indexOf('gushi-classroom') !== -1
+    tip.textContent = /gushi-classroom|woai-p4-classroom|-classroom\//.test(url)
       ? '掃描二維碼，即可開啟這個遊戲'
       : '掃描二維碼，即可開啟這段影片';
     box.appendChild(tip);
