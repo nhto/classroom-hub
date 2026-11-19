@@ -206,6 +206,11 @@ h1,h2,h3,h4,p{margin:0}
   color:var(--ink-soft);
   background:#fff;
 }
+.cat-count.is-pending{
+  background:var(--peach);
+  color:var(--ink);
+}
+.cat-card.is-pending{cursor:default}
 .go-arrow{flex:none;width:18px;height:18px;opacity:.5;align-self:flex-start;margin-top:6px}
 
 /* 分類內的描述與標籤（圖書教學、AI 影片及互動遊戲） */
@@ -871,7 +876,12 @@ h1,h2,h3,h4,p{margin:0}
       btn.type = 'button';
       btn.className = 'cat-card' + (cat.desc ? ' has-desc' : '');
       btn.setAttribute('data-cat', cat.id);
-      btn.setAttribute('aria-label', cat.name + '，共 ' + linksOf(cat.id).length + ' 個連結');
+      var home = officialHomeOf(cat.id);
+      btn.setAttribute('aria-label', home ? cat.name : cat.name + '，準備中');
+      if (!home) {
+        btn.classList.add('is-pending');
+        btn.setAttribute('aria-disabled', 'true');
+      }
 
       var icon = document.createElement('span');
       icon.className = 'cat-icon';
@@ -884,12 +894,13 @@ h1,h2,h3,h4,p{margin:0}
       name.className = 'cat-name';
       name.textContent = cat.name;
 
-      var count = document.createElement('span');
-      count.className = 'cat-count';
-      count.textContent = linksOf(cat.id).length + ' 個連結';
-
       body.appendChild(name);
-      body.appendChild(count);
+      if (!home) {
+        var status = document.createElement('span');
+        status.className = 'cat-count is-pending';
+        status.textContent = '準備中';
+        body.appendChild(status);
+      }
 
       if (cat.desc) {
         var desc = document.createElement('span');
@@ -912,21 +923,20 @@ h1,h2,h3,h4,p{margin:0}
         body.appendChild(desc);
       }
 
-      var arrow = document.createElement('span');
-      arrow.className = 'go-arrow';
-      arrow.innerHTML = ICON_ARROW;
-
       btn.appendChild(icon);
       btn.appendChild(body);
-      btn.appendChild(arrow);
+      if (home) {
+        var arrow = document.createElement('span');
+        arrow.className = 'go-arrow';
+        arrow.innerHTML = ICON_ARROW;
+        btn.appendChild(arrow);
+      }
 
       btn.addEventListener('click', function () {
+        if (!home) { return; }
         state.current = cat.id;
         renderLinks();
-        var home = officialHomeOf(cat.id);
-        if (home) {
-          openLink(home.url);
-        }
+        openLink(home.url);
       });
 
       cardGrid.appendChild(btn);
