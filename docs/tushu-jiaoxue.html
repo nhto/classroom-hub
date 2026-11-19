@@ -973,7 +973,7 @@ input{font:inherit;}
   var DEFAULTS = [
     'https://nhto.github.io/classroom-hub/tea-culture-game.html',
     'https://nhto.github.io/classroom-hub/china-tea-storybook.html',
-    ''
+    'https://youtu.be/k0-5xrHQEPI'
   ];
   var TITLES = ['茶文化互動遊戲', '《中國茶》繪本互動遊戲', '《中國茶》繪本影片'];
   var CHIP_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx="1"/><path d="M14.5 14.5h2.5v2.5h-2.5zM20.5 14.5v2M20.5 20.5h-6"/></svg><span>二維碼</span>';
@@ -1133,7 +1133,9 @@ input{font:inherit;}
     box.appendChild(canvas);
     var tip = document.createElement('p');
     tip.className = 'qr-tip';
-    tip.textContent = '掃描二維碼，即可開啟這個遊戲';
+    tip.textContent = /youtu\.be|youtube\.com/.test(abs)
+      ? '掃描二維碼，即可觀看這段影片'
+      : '掃描二維碼，即可開啟這個遊戲';
     box.appendChild(tip);
     var link = document.createElement('span');
     link.className = 'qr-link';
