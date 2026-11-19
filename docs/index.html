@@ -722,8 +722,8 @@ h1,h2,h3,h4,p{margin:0}
     },
     {
       id: 'official_media_gushi',
-      title: '古詩詞網站',
-      url: 'https://nhto.github.io/gushi-classroom/',
+      title: 'AI 影片及互動遊戲',
+      url: 'ai-videos-games.html',
       cat: 'media',
       official: true,
       home: true
@@ -939,9 +939,17 @@ h1,h2,h3,h4,p{margin:0}
     return text.length > 46 ? text.slice(0, 46) + '…' : text;
   }
 
+  function resolveUrl(url) {
+    try {
+      return new URL(url, location.href).href;
+    } catch (err) {
+      return url;
+    }
+  }
+
   function openLink(url) {
     var capability = 'openDetail';
-    var params = { url: url };
+    var params = { url: resolveUrl(url) };
     return invokeOrFallback(
       capability,
       params,
