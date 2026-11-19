@@ -439,7 +439,7 @@ h1,h2,h3,h4,p{margin:0}
   <header class="hero">
     <span class="tape top" aria-hidden="true"></span>
     <h1><span class="hl">謝老師 AI 互動教室</span></h1>
-    <p class="sub">按一下圖示，就可以進入對應的學習網頁。所有連結都可以自己新增、修改和刪除。</p>
+    <p class="sub">按一下圖示，就可以進入對應的學習網頁。</p>
     <div class="hero-meta">
       <span class="chip pink">語文知識</span>
       <span class="chip mint">寫作工坊</span>
@@ -456,6 +456,7 @@ h1,h2,h3,h4,p{margin:0}
   </div>
   <div class="card-grid" id="cardGrid"></div>
 
+  <div class="my-links" id="myLinksSection" hidden>
   <div class="sec-head">
     <span class="no">2</span>
     <h2>我的連結</h2>
@@ -472,6 +473,7 @@ h1,h2,h3,h4,p{margin:0}
     <button class="btn ghost" type="button" id="btnImport">匯入備份</button>
     <button class="btn ghost" type="button" id="btnHelp">使用說明</button>
     <p class="tip">所有連結只儲存在這個瀏覽器裡，不會上傳到其他地方；清除瀏覽器資料會一併清除，記得先按「匯出」備份。</p>
+  </div>
   </div>
 
   <div class="foot">
@@ -924,9 +926,7 @@ h1,h2,h3,h4,p{margin:0}
         var home = officialHomeOf(cat.id);
         if (home) {
           openLink(home.url);
-          return;
         }
-        linkArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
 
       cardGrid.appendChild(btn);
