@@ -1182,6 +1182,7 @@
     });
   });
 
+  DEFAULT_LINKS['game|p1'] = 'https://nhto.github.io/woai-p1-classroom/';
   DEFAULT_LINKS['game|p4'] = 'https://nhto.github.io/woai-p4-classroom/';
 
   var POEMGAME_PAGES = {
@@ -1192,18 +1193,39 @@
     p5: 'https://nhto.github.io/gushi-classroom/小五古诗词文.html',
     p6: 'https://nhto.github.io/gushi-classroom/小六古詩詞文.html'
   };
-  var POEMGAME_EXTRA = {
-    key: 'poemgame|p4extra',
-    title: '《題西林壁》互動遊戲',
-    url: 'https://nhto.github.io/gushi-classroom/《題西林壁》互動遊戲.html',
-    afterGrade: 'p4'
-  };
+  var EXTRA_LINKS = [
+    {
+      key: 'poemgame|p4extra',
+      title: '《題西林壁》互動遊戲',
+      url: 'https://nhto.github.io/gushi-classroom/《題西林壁》互動遊戲.html',
+      cat: 'poemgame',
+      afterGrade: 'p4',
+      artKey: 'poemgame|p4'
+    },
+    {
+      key: 'game|p1extra',
+      title: '校本單元',
+      url: 'https://nhto.github.io/xiaoben-p1-classroom/',
+      cat: 'game',
+      afterGrade: 'p1',
+      artKey: 'game|p1'
+    }
+  ];
   Object.keys(POEMGAME_PAGES).forEach(function (gid) {
     DEFAULT_LINKS['poemgame|' + gid] = POEMGAME_PAGES[gid];
   });
 
+  function extraOf(key) {
+    for (var i = 0; i < EXTRA_LINKS.length; i++) {
+      if (EXTRA_LINKS[i].key === key) return EXTRA_LINKS[i];
+    }
+    return null;
+  }
+
   function applyExtraLinks() {
-    state.links[POEMGAME_EXTRA.key] = POEMGAME_EXTRA.url;
+    EXTRA_LINKS.forEach(function (item) {
+      state.links[item.key] = item.url;
+    });
   }
 
   /* 「即將推出」：該年級暫未開放，卡片以預告狀態顯示，不提供連結與二維碼 */
@@ -1371,48 +1393,51 @@
     box.hidden = true;
     card.appendChild(box);
 
-    if (cat.id === 'poemgame' && g.id === POEMGAME_EXTRA.afterGrade) {
+    EXTRA_LINKS.forEach(function (item) {
+      if (cat.id !== item.cat || g.id !== item.afterGrade) return;
+
       var extra = document.createElement('div');
       extra.className = 'extra-entry';
 
       var extraBtn = document.createElement('a');
       extraBtn.className = 'extra-btn';
-      extraBtn.href = POEMGAME_EXTRA.url;
+      extraBtn.href = item.url;
       extraBtn.target = '_blank';
       extraBtn.rel = 'noopener noreferrer';
-      extraBtn.setAttribute('aria-label', '開啟' + POEMGAME_EXTRA.title);
+      extraBtn.setAttribute('aria-label', '開啟' + item.title);
 
       var extraIcon = document.createElement('img');
       extraIcon.className = 'extra-icon';
-      extraIcon.src = ART['poemgame|p4'];
+      extraIcon.src = ART[item.artKey];
       extraIcon.alt = '';
       extraIcon.width = 28;
       extraIcon.height = 28;
 
       var extraTitle = document.createElement('span');
-      extraTitle.textContent = POEMGAME_EXTRA.title;
+      extraTitle.textContent = item.title;
 
       extraBtn.appendChild(extraIcon);
       extraBtn.appendChild(extraTitle);
 
+      var extraId = 'qr-' + item.key.replace('|', '-');
       var extraChip = document.createElement('button');
       extraChip.type = 'button';
       extraChip.className = 'qr-chip';
       extraChip.setAttribute('aria-expanded', 'false');
-      extraChip.setAttribute('aria-controls', 'qr-poemgame-p4extra');
+      extraChip.setAttribute('aria-controls', extraId);
       extraChip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx="1"/><path d="M14.5 14.5h2.5v2.5h-2.5zM20.5 14.5v2M20.5 20.5h-6"/></svg><span>二維碼</span>';
-      extraChip.setAttribute('data-qr', POEMGAME_EXTRA.key);
+      extraChip.setAttribute('data-qr', item.key);
 
       var extraBox = document.createElement('div');
       extraBox.className = 'qr-box';
-      extraBox.id = 'qr-poemgame-p4extra';
+      extraBox.id = extraId;
       extraBox.hidden = true;
 
       extra.appendChild(extraBtn);
       extra.appendChild(extraChip);
       extra.appendChild(extraBox);
       card.appendChild(extra);
-    }
+    });
 
     return card;
   }
@@ -1508,7 +1533,8 @@
   }
 
   function titleOfQrKey(key) {
-    if (key === POEMGAME_EXTRA.key) return POEMGAME_EXTRA.title;
+    var extraItem = extraOf(key);
+    if (extraItem) return extraItem.title;
     var parts = String(key).split('|');
     var cat = null, g = null, i;
     for (i = 0; i < CATS.length; i++) {
