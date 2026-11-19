@@ -285,6 +285,47 @@
   }
   .qr-chip svg{width:14px;height:14px;}
   .qr-chip[aria-expanded="true"]{background:var(--c,var(--pink));color:var(--ink);}
+  .extra-entry{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:6px;
+    margin-top:2px;
+    padding-top:8px;
+    border-top:2px dashed rgba(74,59,47,.22);
+  }
+  .extra-btn{
+    flex:1 1 auto;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:6px 10px 6px 6px;
+    background:var(--sky);
+    border:2px solid var(--ink);
+    border-radius:999px;
+    color:var(--ink);
+    text-decoration:none;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.02em;
+    line-height:1.3;
+    box-shadow:2px 2px 0 rgba(74,59,47,.16);
+  }
+  .extra-btn:hover{transform:translateY(-1px);}
+  .extra-btn:active{transform:translateY(1px);box-shadow:1px 1px 0 rgba(74,59,47,.2);}
+  .extra-btn:focus-visible{outline:3px dashed var(--ink);outline-offset:2px;}
+  .extra-icon{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1.6px solid var(--ink);
+    flex:0 0 auto;
+    background:#fdf6e9;
+  }
+  .extra-entry .qr-chip{flex:0 0 auto;}
+  .extra-entry .qr-box{flex-basis:100%;}
   .qr-box{
     margin-top:2px;
     padding:10px 8px 8px;
@@ -1070,6 +1111,28 @@
     });
   });
 
+  var POEMGAME_PAGES = {
+    p1: 'https://nhto.github.io/gushi-classroom/小一古詩詞文.html',
+    p2: 'https://nhto.github.io/gushi-classroom/小二古詩詞文.html',
+    p3: 'https://nhto.github.io/gushi-classroom/小三古诗词文.html',
+    p4: 'https://nhto.github.io/gushi-classroom/小四古詩詞文.html',
+    p5: 'https://nhto.github.io/gushi-classroom/小五古诗词文.html',
+    p6: 'https://nhto.github.io/gushi-classroom/小六古詩詞文.html'
+  };
+  var POEMGAME_EXTRA = {
+    key: 'poemgame|p4extra',
+    title: '《題西林壁》互動遊戲',
+    url: 'https://nhto.github.io/gushi-classroom/《題西林壁》互動遊戲.html',
+    afterGrade: 'p4'
+  };
+  Object.keys(POEMGAME_PAGES).forEach(function (gid) {
+    DEFAULT_LINKS['poemgame|' + gid] = POEMGAME_PAGES[gid];
+  });
+
+  function applyExtraLinks() {
+    state.links[POEMGAME_EXTRA.key] = POEMGAME_EXTRA.url;
+  }
+
   /* 「即將推出」：該年級暫未開放，卡片以預告狀態顯示，不提供連結與二維碼 */
   var COMING = {
     textbook: { p2: true, p3: true, p5: true, p6: true },
@@ -1118,7 +1181,10 @@
     for (var key in DEFAULT_LINKS) {
       if (!Object.prototype.hasOwnProperty.call(DEFAULT_LINKS, key)) continue;
       var v = saved && typeof saved[key] === 'string' ? saved[key] : '';
-      out[key] = v ? v : DEFAULT_LINKS[key];
+      if (!v || v.indexOf('https://example.com/video/') === 0) {
+        v = DEFAULT_LINKS[key];
+      }
+      out[key] = v;
     }
     return out;
   }
@@ -1231,6 +1297,49 @@
     box.hidden = true;
     card.appendChild(box);
 
+    if (cat.id === 'poemgame' && g.id === POEMGAME_EXTRA.afterGrade) {
+      var extra = document.createElement('div');
+      extra.className = 'extra-entry';
+
+      var extraBtn = document.createElement('a');
+      extraBtn.className = 'extra-btn';
+      extraBtn.href = POEMGAME_EXTRA.url;
+      extraBtn.target = '_blank';
+      extraBtn.rel = 'noopener noreferrer';
+      extraBtn.setAttribute('aria-label', '開啟' + POEMGAME_EXTRA.title);
+
+      var extraIcon = document.createElement('img');
+      extraIcon.className = 'extra-icon';
+      extraIcon.src = ART['poemgame|p4'];
+      extraIcon.alt = '';
+      extraIcon.width = 28;
+      extraIcon.height = 28;
+
+      var extraTitle = document.createElement('span');
+      extraTitle.textContent = POEMGAME_EXTRA.title;
+
+      extraBtn.appendChild(extraIcon);
+      extraBtn.appendChild(extraTitle);
+
+      var extraChip = document.createElement('button');
+      extraChip.type = 'button';
+      extraChip.className = 'qr-chip';
+      extraChip.setAttribute('aria-expanded', 'false');
+      extraChip.setAttribute('aria-controls', 'qr-poemgame-p4extra');
+      extraChip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx="1"/><path d="M14.5 14.5h2.5v2.5h-2.5zM20.5 14.5v2M20.5 20.5h-6"/></svg><span>二維碼</span>';
+      extraChip.setAttribute('data-qr', POEMGAME_EXTRA.key);
+
+      var extraBox = document.createElement('div');
+      extraBox.className = 'qr-box';
+      extraBox.id = 'qr-poemgame-p4extra';
+      extraBox.hidden = true;
+
+      extra.appendChild(extraBtn);
+      extra.appendChild(extraChip);
+      extra.appendChild(extraBox);
+      card.appendChild(extra);
+    }
+
     return card;
   }
 
@@ -1305,7 +1414,9 @@
 
     var tip = document.createElement('p');
     tip.className = 'qr-tip';
-    tip.textContent = '掃描二維碼，即可開啟這段影片';
+    tip.textContent = url.indexOf('gushi-classroom') !== -1
+      ? '掃描二維碼，即可開啟這個遊戲'
+      : '掃描二維碼，即可開啟這段影片';
     box.appendChild(tip);
 
     var link = document.createElement('span');
@@ -1492,6 +1603,7 @@
     for (var key in DEFAULT_LINKS) {
       if (Object.prototype.hasOwnProperty.call(DEFAULT_LINKS, key)) state.links[key] = DEFAULT_LINKS[key];
     }
+    applyExtraLinks();
     try { window.localStorage.removeItem(STORAGE_KEY); } catch (err) { /* 略過 */ }
     closeAllQr();
     renderGrids();
@@ -1559,6 +1671,7 @@
     gridEls.game = document.getElementById('grid-game');
     gridEls.poemgame = document.getElementById('grid-poemgame');
     state.links = loadLinks();
+    applyExtraLinks();
     renderGrids();
     renderTabs();
     renderNotice();
