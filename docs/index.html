@@ -723,7 +723,8 @@ h1,h2,h3,h4,p{margin:0}
       title: '古詩詞網站',
       url: 'https://nhto.github.io/gushi-classroom/',
       cat: 'media',
-      official: true
+      official: true,
+      home: true
     },
     {
       id: 'official_media_xiaoben_p1',
@@ -764,6 +765,14 @@ h1,h2,h3,h4,p{margin:0}
 
   function officialOf(catId) {
     return OFFICIAL_LINKS.filter(function (l) { return l.cat === catId; });
+  }
+
+  function officialHomeOf(catId) {
+    var list = officialOf(catId);
+    var homes = list.filter(function (l) { return l.home; });
+    if (homes.length) { return homes[0]; }
+    if (list.length === 1) { return list[0]; }
+    return null;
   }
 
   function createId() {
@@ -912,9 +921,9 @@ h1,h2,h3,h4,p{margin:0}
       btn.addEventListener('click', function () {
         state.current = cat.id;
         renderLinks();
-        var homes = officialOf(cat.id);
-        if (homes.length === 1) {
-          openLink(homes[0].url);
+        var home = officialHomeOf(cat.id);
+        if (home) {
+          openLink(home.url);
           return;
         }
         linkArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
