@@ -294,6 +294,11 @@
     padding-top:8px;
     border-top:2px dashed rgba(74,59,47,.22);
   }
+  .extra-entry--main{
+    margin-top:0;
+    padding-top:0;
+    border-top:0;
+  }
   .extra-btn{
     flex:1 1 auto;
     min-width:0;
@@ -1185,6 +1190,11 @@
   DEFAULT_LINKS['game|p1'] = 'https://nhto.github.io/woai-p1-classroom/';
   DEFAULT_LINKS['game|p4'] = 'https://nhto.github.io/woai-p4-classroom/';
 
+  var GAME_TITLES = {
+    'game|p1': '《我愛學語文》',
+    'game|p4': '《我愛學語文》'
+  };
+
   var POEMGAME_PAGES = {
     p1: 'https://nhto.github.io/gushi-classroom/小一古詩詞文.html',
     p2: 'https://nhto.github.io/gushi-classroom/小二古詩詞文.html',
@@ -1378,6 +1388,36 @@
       return card;
     }
 
+    var cardTitle = GAME_TITLES[key];
+    var chipHost = card;
+    if (cardTitle) {
+      var titleEntry = document.createElement('div');
+      titleEntry.className = 'extra-entry extra-entry--main';
+
+      var titleBtn = document.createElement('a');
+      titleBtn.className = 'extra-btn';
+      titleBtn.href = url;
+      titleBtn.target = '_blank';
+      titleBtn.rel = 'noopener noreferrer';
+      titleBtn.setAttribute('aria-label', '開啟' + cardTitle);
+
+      var titleIcon = document.createElement('img');
+      titleIcon.className = 'extra-icon';
+      titleIcon.src = ART[key];
+      titleIcon.alt = '';
+      titleIcon.width = 28;
+      titleIcon.height = 28;
+
+      var titleText = document.createElement('span');
+      titleText.textContent = cardTitle;
+
+      titleBtn.appendChild(titleIcon);
+      titleBtn.appendChild(titleText);
+      titleEntry.appendChild(titleBtn);
+      card.appendChild(titleEntry);
+      chipHost = titleEntry;
+    }
+
     var chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'qr-chip';
@@ -1385,13 +1425,13 @@
     chip.setAttribute('aria-controls', 'qr-' + cat.id + '-' + g.id);
     chip.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="3.5" width="6" height="6" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx="1"/><path d="M14.5 14.5h2.5v2.5h-2.5zM20.5 14.5v2M20.5 20.5h-6"/></svg><span>二維碼</span>';
     chip.setAttribute('data-qr', key);
-    card.appendChild(chip);
+    chipHost.appendChild(chip);
 
     var box = document.createElement('div');
     box.className = 'qr-box';
     box.id = 'qr-' + cat.id + '-' + g.id;
     box.hidden = true;
-    card.appendChild(box);
+    chipHost.appendChild(box);
 
     EXTRA_LINKS.forEach(function (item) {
       if (cat.id !== item.cat || g.id !== item.afterGrade) return;
@@ -1537,6 +1577,12 @@
     if (extraItem) return extraItem.title;
     var parts = String(key).split('|');
     var cat = null, g = null, i;
+    if (GAME_TITLES[key]) {
+      for (i = 0; i < GRADES.length; i++) {
+        if (GRADES[i].id === parts[1]) g = GRADES[i];
+      }
+      return g ? g.name + GAME_TITLES[key] : GAME_TITLES[key];
+    }
     for (i = 0; i < CATS.length; i++) {
       if (CATS[i].id === parts[0]) cat = CATS[i];
     }
