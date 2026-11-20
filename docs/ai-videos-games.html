@@ -1189,6 +1189,7 @@
 
   DEFAULT_LINKS['game|p1'] = 'https://nhto.github.io/woai-p1-classroom/';
   DEFAULT_LINKS['game|p4'] = 'https://nhto.github.io/woai-p4-classroom/';
+  DEFAULT_LINKS['textbook|p1'] = 'https://www.youtube.com/playlist?list=PLT_EdfK1gRew';
 
   var GAME_TITLES = {
     'game|p1': '《我愛學語文》',
@@ -1554,9 +1555,13 @@
 
     var tip = document.createElement('p');
     tip.className = 'qr-tip';
-    tip.textContent = /gushi-classroom|woai-p4-classroom|-classroom\//.test(url)
-      ? '掃描二維碼，即可開啟這個遊戲'
-      : '掃描二維碼，即可開啟這段影片';
+    if (/gushi-classroom|woai-p4-classroom|-classroom\//.test(url)) {
+      tip.textContent = '掃描二維碼，即可開啟這個遊戲';
+    } else if (/[?&]list=/.test(url) || /\/playlist\?/.test(url)) {
+      tip.textContent = '掃描二維碼，即可觀看這個播放清單';
+    } else {
+      tip.textContent = '掃描二維碼，即可開啟這段影片';
+    }
     box.appendChild(tip);
 
     var link = document.createElement('span');
